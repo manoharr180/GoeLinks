@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeoLinks.Authentication\GeoLinks.Authentication.csproj" />
+    <ProjectReference Include="..\GeoLinks.DataLayer\GeoLinks.DataLayer.csproj" />
+    <ProjectReference Include="..\GeoLinks.Entities\GeoLinks.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
