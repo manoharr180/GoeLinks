@@ -13,7 +13,7 @@ namespace GeoLinks.API
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args ?? Array.Empty<string>()).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

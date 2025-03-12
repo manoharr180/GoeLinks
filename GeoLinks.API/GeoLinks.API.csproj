@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,4 +18,10 @@
     <ProjectReference Include="..\GeoLinks.Services\GeoLinks.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
 </Project>

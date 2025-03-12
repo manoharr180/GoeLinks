@@ -64,13 +64,13 @@ namespace GeoLinks.API
                     };
                 });
 
-            
+
             services.AddCors(
             options =>
             {
                 options.AddDefaultPolicy(policy =>
                 {
-                    policy.WithOrigins("*")
+                    policy.AllowAnyOrigin()
                     .WithMethods("GET,POST,PUT,DELETE,OPTIONS")
                     .AllowAnyHeader();
                     //policy.WithMethods("GET,POST,PUT,DELETE,OPTIONS");
@@ -79,7 +79,7 @@ namespace GeoLinks.API
                 options.AddPolicy("EnableCors",
                 builder =>
                 {
-                    builder.WithOrigins("*")
+                    builder.AllowAnyOrigin()
                     .WithMethods("GET, POST, PUT, DELETE, OPTIONS")
                     .AllowAnyHeader();
                 });
@@ -88,9 +88,9 @@ namespace GeoLinks.API
 
             services.AddMvc(routes =>
             {
-                routes.EnableEndpointRouting = false;
+                routes.EnableEndpointRouting = true;
             });
-                     
+
 
             services.AddDbContext<GeoLensContext>(options =>
             {
@@ -109,19 +109,21 @@ namespace GeoLinks.API
             {
                 app.UseDeveloperExceptionPage();
             }
-            
 
-            //app.UseRouting();
-            //app.UseAuthorization();
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllers();
-            //});
+
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
 
             app.UseAuthentication();
-            app.UseCors(options => options.WithOrigins("*").WithHeaders("Content-Type", "Accept", "Authorization").AllowAnyMethod());
-            app.UseMvc();
-            
+            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod()
+                            .AllowAnyOrigin());
+
+
         }
     }
 }
