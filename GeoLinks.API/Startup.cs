@@ -48,6 +48,7 @@ namespace GeoLinks.API
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IFriendService, FriendService>();
             services.AddTransient<IInterestsService, InterestsService>();
+            services.AddTransient<IStoreService, StoreService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddAutoMapper(typeof(Startup));

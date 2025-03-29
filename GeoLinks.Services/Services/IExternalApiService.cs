@@ -4,9 +4,9 @@ namespace GeoLinks.Services.Services
 {
     public interface IExternalApiService
     {
-        Task<string> CreateAsync(string url, object data);
-        Task<string> ReadAsync(string url);
-        Task<string> UpdateAsync(string url, object data);
-        Task<string> DeleteAsync(string url);
+        Task<T> CreateAsync<T>(string url, object data);
+        Task<T> ReadAsync<T>(string url);
+        Task<T> UpdateAsync<T>(string url, object data);
+        Task<T> DeleteAsync<T>(string url);
     }
 }
