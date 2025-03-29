@@ -39,15 +39,10 @@ namespace GeoLinks.API
             // Data Access Layer
             services.AddTransient<IProfileDal, ProfilesDal>();
             services.AddTransient<IAuthDal, AuthDal>();
-            services.AddTransient<IFriendDal, FriendDal>();
-            services.AddTransient<IHobbiesDal, HobbiesDal>();
-            services.AddTransient<IInterestsDal, InterestsDal>();
 
             // Service layer
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IAuthService, AuthService>();
-            services.AddTransient<IFriendService, FriendService>();
-            services.AddTransient<IInterestsService, InterestsService>();
             services.AddTransient<IStoreService, StoreService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -112,8 +107,6 @@ namespace GeoLinks.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGet("/", () => "Hello Geo World!")
-                    .WithName("GetHelloWorld");
             });
             app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         }
