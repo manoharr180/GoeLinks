@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using GeoLinks.Entities.Modals;
 using GeoLinks.Services.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 
@@ -16,8 +15,8 @@ namespace GeoLinks.API.Controller
 {
     //[Authorize]
     [AllowAnonymous]
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ProfileController : ControllerBase
     {
         private IProfileService profileService;
@@ -26,16 +25,16 @@ namespace GeoLinks.API.Controller
             this.profileService = profileService;
         }
         [HttpGet]
-        public IActionResult GetProfile([System.Web.Http.FromUri]string mail)
+        public async Task<IActionResult> GetProfile([FromQuery]string mail)
         {
-            HttpResponseMessage httpResponseMessage = new HttpResponseMessage();
             
-            string json = string.Empty;
+             string json = string.Empty;
 
             using (StreamReader reader = new StreamReader("./Assets/data.json"))
             {
                 json = reader.ReadToEnd();
             }
+            //json = await profileService.GetS3ObjectContentAsync();
                 
             return Ok(json);
         }

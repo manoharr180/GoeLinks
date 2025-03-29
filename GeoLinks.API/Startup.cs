@@ -18,29 +18,32 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-
 namespace GeoLinks.API
 {
-    public class Startup
+    public  class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            //Data Access Layer
+            services.AddEndpointsApiExplorer();
+            services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
+            // Register HttpClient
+            services.AddHttpClient<IExternalApiService, ExternalApiService>();
+
+            // Data Access Layer
             services.AddTransient<IProfileDal, ProfilesDal>();
             services.AddTransient<IAuthDal, AuthDal>();
             services.AddTransient<IFriendDal, FriendDal>();
             services.AddTransient<IHobbiesDal, HobbiesDal>();
             services.AddTransient<IInterestsDal, InterestsDal>();
 
-            //Service layer
+            // Service layer
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IFriendService, FriendService>();
@@ -48,7 +51,9 @@ namespace GeoLinks.API
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddAutoMapper(typeof(Startup));
-            //Should be in beginning
+            services.AddControllers();
+
+            // Authentication
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -64,66 +69,52 @@ namespace GeoLinks.API
                     };
                 });
 
+            
 
-            services.AddCors(
-            options =>
+            // CORS
+            services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policy =>
                 {
                     policy.AllowAnyOrigin()
-                    .WithMethods("GET,POST,PUT,DELETE,OPTIONS")
-                    .AllowAnyHeader();
-                    //policy.WithMethods("GET,POST,PUT,DELETE,OPTIONS");
-
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
                 });
-                options.AddPolicy("EnableCors",
-                builder =>
-                {
-                    builder.AllowAnyOrigin()
-                    .WithMethods("GET, POST, PUT, DELETE, OPTIONS")
-                    .AllowAnyHeader();
-                });
-            }
-            );
+            });
 
             services.AddMvc(routes =>
             {
                 routes.EnableEndpointRouting = true;
             });
 
-
+            // Database context
             services.AddDbContext<GeoLensContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("GeoLensContext")
-                    , builder =>
-                    {
-                        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-                    });
+                options.UseSqlServer(Configuration.GetConnectionString("GeoLensContext"), builder =>
+                {
+                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                });
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGet("/", () => "Hello Geo World!")
+                    .WithName("GetHelloWorld");
             });
-
-
-            app.UseAuthentication();
-            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod()
-                            .AllowAnyOrigin());
-
-
+            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         }
     }
 }
