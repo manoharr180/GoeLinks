@@ -1,7 +1,21 @@
+using System.Collections.Generic;
+
+public class Stores
+{
+    public List<Store> stores { get; set; }
+}
 public class Store
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
+        public int StoreId { get; set; }
+        public string StoreName { get; set; }
+        public string StoreLogo { get; set; }
+        public List<StoreItemDetails> storeItems { get; set; }
+        
+    }
+
+public class StoreItemDetails{
+        public int ItemId { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public string Price { get; set; }
         public string Category { get; set; }
@@ -11,5 +25,5 @@ public class Store
         public string Material { get; set; }
         public string Quntity { get; set; }
         public string Url { get; set; }
-        public string ThumbnailUrl { get; set; }
-    }
+        public string ImageUrl { get; set; }
+}

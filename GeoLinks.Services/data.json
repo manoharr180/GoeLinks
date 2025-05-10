@@ -1,0 +1,73 @@
+{
+  "stores": [
+    {
+      "storeId": 1,
+      "storeName": "Manva Stores",
+      "storeLogo": "https://via.placeholder.com/150",
+      "storeItems": [
+        {
+          "ItemId": 1,
+          "Name": "Men's T-Shirt",
+          "Description": "Comfortable cotton t-shirt for men.",
+          "Price": "19.99",
+          "Category": "Men Clothing",
+          "Brand": "FashionPro",
+          "Color": "Blue",
+          "Size": "L",
+          "Material": "Cotton",
+          "Quntity": "100",
+          "Url": "https://example.com/products/mens-tshirt",
+          "ImageUrl": "https://via.placeholder.com/150"
+        },
+        {
+          "ItemId": 2,
+          "Name": "Women's Dress",
+          "Description": "Elegant evening dress for women.",
+          "Price": "49.99",
+          "Category": "Women Clothing",
+          "Brand": "StyleQueen",
+          "Color": "Red",
+          "Size": "M",
+          "Material": "Silk",
+          "Quntity": "50",
+          "Url": "https://example.com/products/womens-dress",
+          "ImageUrl": "https://via.placeholder.com/150"
+        }
+      ]
+    },
+    {
+      "storeId": 2,
+      "storeName": "Sattva Wear",
+      "storeItems": [
+        {
+          "ItemId": 1,
+          "Name": "Men's Jeans",
+          "Description": "Classic denim jeans for men.",
+          "Price": "39.99",
+          "Category": "Men Clothing",
+          "Brand": "DenimWorld",
+          "Color": "Black",
+          "Size": "32",
+          "Material": "Denim",
+          "Quntity": "75",
+          "Url": "https://example.com/products/mens-jeans",
+          "ImageUrl": "https://via.placeholder.com/150"
+        },
+        {
+          "ItemId": 2,
+          "Name": "Women's Blouse",
+          "Description": "Stylish blouse for casual wear.",
+          "Price": "29.99",
+          "Category": "Women Clothing",
+          "Brand": "ChicWear",
+          "Color": "White",
+          "Size": "S",
+          "Material": "Polyester",
+          "Quntity": "60",
+          "Url": "https://example.com/products/womens-blouse",
+          "ImageUrl": "https://via.placeholder.com/150"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GeoLinks.Services.Services;
+using System.IO;
+using System.Text.Json;
+using System.Linq;
 
 namespace GeoLinks.Services.Implementations
 {
@@ -22,10 +25,15 @@ namespace GeoLinks.Services.Implementations
             throw new System.NotImplementedException();
         }
 
-        public Task<IEnumerable<Store>> GetAllStoresAsync()
+        public Task<Stores> GetAllStoresAsync()
         {
-            return this._externalApiService.ReadAsync<List<Store>>("https://manva-store-data.s3.us-east-1.amazonaws.com/storedata.json")
-                .ContinueWith(task => (IEnumerable<Store>)task.Result);
+            // return this._externalApiService.ReadAsync<List<Store>>("https://manva-store-data.s3.us-east-1.amazonaws.com/storedata.json")
+            //     .ContinueWith(task => (IEnumerable<Store>)task.Result);
+            var json = File.ReadAllText("../GeoLinks.Services/data.json");
+            return Task.FromResult(JsonSerializer.Deserialize<Stores>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }));
         }
 
         public Task<Store> GetStoreByIdAsync(int storeId)

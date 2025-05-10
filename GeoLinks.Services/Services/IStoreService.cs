@@ -5,7 +5,7 @@ namespace GeoLinks.Services.Services
 {
     public interface IStoreService
     {
-        Task<IEnumerable<Store>> GetAllStoresAsync();
+        Task<Stores> GetAllStoresAsync();
         Task<Store> GetStoreByIdAsync(int storeId);
         Task<bool> CreateStoreAsync(Store store);
         Task<bool> UpdateStoreAsync(Store store);
