@@ -100,6 +100,7 @@ namespace GeoLinks.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -108,7 +109,7 @@ namespace GeoLinks.API
             {
                 endpoints.MapControllers();
             });
-            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+            
         }
     }
 }
