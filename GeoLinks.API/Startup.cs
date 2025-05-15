@@ -40,6 +40,7 @@ namespace GeoLinks.API
             services.AddTransient<IProfileDal, ProfilesDal>();
             services.AddTransient<IAuthDal, AuthDal>();
             services.AddTransient<ICartRepository, CartRepository>();
+            services.AddTransient<IStoreRepository, StoreRepository>();
 
             // Service layer
             services.AddTransient<IProfileService, ProfileService>();
@@ -66,8 +67,6 @@ namespace GeoLinks.API
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
                     };
                 });
-
-            
 
             // CORS
             services.AddCors(options =>
