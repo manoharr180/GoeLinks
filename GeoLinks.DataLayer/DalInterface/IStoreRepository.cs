@@ -5,10 +5,10 @@ namespace GeoLinks.DataLayer.DalInterface
 {
     public interface IStoreRepository
     {
-        Task<List<StoresDto>> GetAllStoresAsync();
-        Task<StoreDto> GetStoreByIdAsync(int storeId);
+        Task<List<StoreDto>> GetAllStoresAsync();
+        Task<StoreDto> GetStoreByIdAsync(string storeId);
         Task AddStoreAsync(StoreDto store);
         Task UpdateStoreAsync(StoreDto store);
-        Task DeleteStoreAsync(int storeId);
+        Task DeleteStoreAsync(string storeId);
     }
 }

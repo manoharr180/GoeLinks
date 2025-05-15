@@ -14,7 +14,6 @@ namespace GeoLinks.DataLayer
         public DbSet<ProfileDto> ProfileDtos { get; set; }
         public DbSet<Password> PasswordDtos { get; set; }
         public DbSet<LoginUser> LoginUsers { get; set; }
-        public DbSet<StoresDto> Stores { get; set; }
         public DbSet<StoreDto> Store { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

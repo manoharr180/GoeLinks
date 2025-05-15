@@ -20,11 +20,11 @@ namespace GeoLinks.DataLayer.DalImplementation
             _context = context;
         }
 
-        public async Task<List<StoresDto>> GetAllStoresAsync()
+        public async Task<List<StoreDto>> GetAllStoresAsync()
         {
-            return await _context.Stores.ToListAsync();
+            return await _context.Store.ToListAsync();
         }
-        public async Task<StoreDto> GetStoreByIdAsync(int id)
+        public async Task<StoreDto> GetStoreByIdAsync(string id)
         {
             return await _context.Store.FirstOrDefaultAsync(s => s.StoreId == id);
         }
@@ -42,7 +42,7 @@ namespace GeoLinks.DataLayer.DalImplementation
             return Task.CompletedTask;
         }
 
-        public Task DeleteStoreAsync(int id)
+        public Task DeleteStoreAsync(string id)
         {
             var store = _context.Store.FirstOrDefault(s => s.StoreId == id);
             if (store != null)

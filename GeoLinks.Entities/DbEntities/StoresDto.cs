@@ -1,12 +1,12 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+//                         ValidateIssuer = true,
 
-public class StoresDto
-{
-    public List<StoreDto> storesDto { get; set; }
-}
 public class StoreDto
     {
-        public int StoreId { get; set; }
+        [Key]
+        public string StoreId { get; set; }
         public string StoreName { get; set; }
         public string StoreLogo { get; set; }
         public List<StoreItemDetails> storeItems { get; set; }
@@ -14,7 +14,13 @@ public class StoreDto
     }
 
 public class StoreItemDetailsDto{
+    [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ItemId { get; set; }
+        [ForeignKey("StoreDto")]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string StoreId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Price { get; set; }
