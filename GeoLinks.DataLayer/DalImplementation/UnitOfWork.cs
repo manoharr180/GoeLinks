@@ -21,10 +21,6 @@ namespace GeoLinks.DataLayer.DalImplementation
         private IGenericRepository<ProfileDto> genericProfileRepository;
         private IGenericRepository<Password> genericPasswordRepository;
         private IGenericRepository<LoginUser> genericLogInRepository;
-        private IGenericRepository<FriendDto> genericFriendRepository;
-        private IGenericRepository<FriendDetailDto> genericFriendDetailsRepository;
-        private IGenericRepository<HobbiesDto> genericHobbiesRepository;
-        private IGenericRepository<InterestsDto> genericInterestsRepository;
         private GeoLensContext geoLensContext;
         //Using the Constructor we are initializing the _context variable is nothing but
         //we are storing the DBContext (EmployeeDBContext) object in _context variable
@@ -68,46 +64,6 @@ namespace GeoLinks.DataLayer.DalImplementation
                 if (this.genericLogInRepository == null)
                     this.genericLogInRepository = new GenericRepository<LoginUser>(this.geoLensContext);
                 return genericLogInRepository;
-            }
-        }
-
-        public IGenericRepository<FriendDto> GenericFriendsRepository
-        {
-            get
-            {
-                if (this.genericFriendRepository == null)
-                    this.genericFriendRepository = new GenericRepository<FriendDto>(this.geoLensContext);
-                return genericFriendRepository;
-            }
-        }
-
-        public IGenericRepository<FriendDetailDto> GenericFriendDetailsRepository
-        {
-            get
-            {
-                if (this.genericFriendDetailsRepository == null)
-                    this.genericFriendDetailsRepository = new GenericRepository<FriendDetailDto>(this.geoLensContext);
-                return genericFriendDetailsRepository;
-            }
-        }
-
-        public IGenericRepository<HobbiesDto> GenericHobbiesRepository
-        {
-            get
-            {
-                if(this.genericHobbiesRepository == null)
-                    this.genericHobbiesRepository = new GenericRepository<HobbiesDto>(this.geoLensContext);
-                return genericHobbiesRepository;
-            }
-        }
-
-        public IGenericRepository<InterestsDto> GenericInterestsRepository
-        {
-            get
-            {
-                if (this.genericInterestsRepository == null)
-                    this.genericInterestsRepository = new GenericRepository<InterestsDto>(this.geoLensContext);
-                return genericInterestsRepository;
             }
         }
 
