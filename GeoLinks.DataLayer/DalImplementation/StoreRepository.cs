@@ -1,13 +1,9 @@
 using GeoLinks.DataLayer.DalInterface;
-using GeoLinks.DataLayer.GenericRepository;
 using GeoLinks.Entities.DbEntities;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GeoLinks.DataLayer; 
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Text;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GeoLinks.DataLayer.DalImplementation
 {
@@ -22,36 +18,39 @@ namespace GeoLinks.DataLayer.DalImplementation
 
         public async Task<List<StoreDto>> GetAllStoresAsync()
         {
-            return await _context.Store.ToListAsync();
+            var data = await _context.stores
+            .Include(s => s.StoreItemDetails)
+            .ToListAsync();
+            return data;
         }
+
         public async Task<StoreDto> GetStoreByIdAsync(string id)
         {
-            return await _context.Store.FirstOrDefaultAsync(s => s.StoreId == id);
-        }
-        public Task AddStoreAsync(StoreDto store)
-        {
-            _context.Store.Add(store);
-            _context.SaveChanges();
-            return Task.CompletedTask;
+            return await _context.stores
+            //.Include(s => s.storeItems)
+                .FirstOrDefaultAsync(s => s.StoreId == id);
         }
 
-        public Task UpdateStoreAsync(StoreDto store)
+        public async Task AddStoreAsync(StoreDto store)
         {
-            _context.Store.Update(store);
-            _context.SaveChanges();
-            return Task.CompletedTask;
+            _context.stores.Add(store);
+            await _context.SaveChangesAsync();
         }
 
-        public Task DeleteStoreAsync(string id)
+        public async Task UpdateStoreAsync(StoreDto store)
         {
-            var store = _context.Store.FirstOrDefault(s => s.StoreId == id);
+            _context.stores.Update(store);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteStoreAsync(string id)
+        {
+            var store = await _context.stores.FirstOrDefaultAsync(s => s.StoreId == id);
             if (store != null)
             {
-                _context.Store.Remove(store);
-                _context.SaveChanges();
-                
+                _context.stores.Remove(store);
+                await _context.SaveChangesAsync();
             }
-            return Task.CompletedTask;
         }
     }
 }

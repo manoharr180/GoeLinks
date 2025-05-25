@@ -4,32 +4,64 @@ using System.ComponentModel.DataAnnotations.Schema;
 //                         ValidateIssuer = true,
 
 public class StoreDto
-    {
-        [Key]
-        public string StoreId { get; set; }
-        public string StoreName { get; set; }
-        public string StoreLogo { get; set; }
-        public List<StoreItemDetails> storeItems { get; set; }
-        
-    }
-
-public class StoreItemDetailsDto{
+{
     [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ItemId { get; set; }
-        [ForeignKey("StoreDto")]
-        [Column(Order = 1)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string StoreId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Price { get; set; }
-        public string Category { get; set; }
-        public string Brand { get; set; }
-        public string Color { get; set; }
-        public string Size { get; set; }
-        public string Material { get; set; }
-        public string Quntity { get; set; }
-        public string Url { get; set; }
-        public string ImageUrl { get; set; }
+    [Column("storeid")]
+    public string StoreId { get; set; }
+
+    [Column("storename")]
+    public string StoreName { get; set; }
+
+    [Column("storelogo")]
+    public string StoreLogo { get; set; }
+
+    public List<StoreItemDetailsDto> StoreItemDetails { get; set; }
+}
+
+[Table("storeitemdetails")]
+public class StoreItemDetailsDto
+{
+    [Key]
+    [Column("itemid")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int ItemId { get; set; }
+
+    [Column("storeid")]
+    public string StoreId { get; set; }
+
+    [ForeignKey("StoreId")]
+    public StoreDto Store { get; set; }
+
+    [Column("name")]
+    public string Name { get; set; }
+
+    [Column("description")]
+    public string Description { get; set; }
+
+    [Column("price")]
+    public string Price { get; set; }
+
+    [Column("category")]
+    public string Category { get; set; }
+
+    [Column("brand")]
+    public string Brand { get; set; }
+
+    [Column("color")]
+    public string Color { get; set; }
+
+    [Column("size")]
+    public string Size { get; set; }
+
+    [Column("material")]
+    public string Material { get; set; }
+
+    [Column("quntity")]
+    public string Quntity { get; set; }
+
+    [Column("url")]
+    public string Url { get; set; }
+
+    [Column("imageurl")]
+    public string ImageUrl { get; set; }
 }

@@ -4,17 +4,21 @@ using GeoLinks.Services.Services;
 using System.IO;
 using System.Text.Json;
 using System.Linq;
+using GeoLinks.DataLayer.DalInterface;
+using GeoLinks.Entities.DbEntities;
 
 namespace GeoLinks.Services.Implementations
 {
     public class StoreService : IStoreService
     {
         private readonly IExternalApiService _externalApiService;
-        public StoreService(IExternalApiService externalApiService)
+        private readonly IStoreRepository _storeRepository;
+
+        public StoreService(IExternalApiService externalApiService, IStoreRepository storeRepository)
         {
+            _storeRepository = storeRepository;
             _externalApiService = externalApiService;
         }
-
         public Task<bool> CreateStoreAsync(Store store)
         {
             throw new System.NotImplementedException();
@@ -25,15 +29,15 @@ namespace GeoLinks.Services.Implementations
             throw new System.NotImplementedException();
         }
 
-        public Task<Stores> GetAllStoresAsync()
+        public async Task<Stores> GetAllStoresAsync()
         {
-            // return this._externalApiService.ReadAsync<List<Store>>("https://manva-store-data.s3.us-east-1.amazonaws.com/storedata.json")
-            //     .ContinueWith(task => (IEnumerable<Store>)task.Result);
-            var json = File.ReadAllText("../GeoLinks.Services/data.json");
-            return Task.FromResult(JsonSerializer.Deserialize<Stores>(json, new JsonSerializerOptions
+            var stores = await _storeRepository.GetAllStoresAsync();
+          
+             var json = await File.ReadAllTextAsync("../GeoLinks.Services/data.json");
+            return JsonSerializer.Deserialize<Stores>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            }));
+            });
         }
 
         public Task<Store> GetStoreByIdAsync(int storeId)

@@ -86,12 +86,18 @@ namespace GeoLinks.API
 
             // Database context
             services.AddDbContext<GeoLensContext>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("GeoLensContext"), builder =>
-                {
-                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-                });
-            });
+                options.UseNpgsql(
+                    Configuration.GetConnectionString("GeoLensContext"),
+                    b => b.MigrationsAssembly("GeoLinks.DataLayer")
+                )
+            );
+            // services.AddDbContext<GeoLensContext>(options =>
+            // {
+            //     options.UseSqlServer(Configuration.GetConnectionString("GeoLensContext"), builder =>
+            //     {
+            //         builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+            //     });
+            // });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

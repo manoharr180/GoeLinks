@@ -11,9 +11,9 @@ namespace GeoLinks.DataLayer.DalImplementation
     public class CartRepository : ICartRepository
     {
         // Example properties and methods for the CartRepository class
-        private readonly DbContext _context;
+        private readonly GeoLensContext _context;
 
-        public CartRepository(DbContext context)
+        public CartRepository(GeoLensContext context)
         {
             _context = context;
         }
