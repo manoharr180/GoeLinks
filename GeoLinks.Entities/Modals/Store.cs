@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public class Store
@@ -5,6 +6,9 @@ public class Store
         public int StoreId { get; set; }
         public string StoreName { get; set; }
         public string StoreLogo { get; set; }
+        public DateTime CreatedDatetime { get; set; }
+        public DateTime ModifieDatetime { get; set; }
+        public bool IsActive { get; set; }
         public List<StoreItemDetails> StoreItemDetails { get; set; }
         
     }

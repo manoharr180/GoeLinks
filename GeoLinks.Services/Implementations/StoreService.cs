@@ -31,7 +31,8 @@ namespace GeoLinks.Services.Implementations
 
         public async Task<List<Store>>  GetAllStoresAsync()
         {
-            var stores = await _storeRepository.GetAllStoresAsync();
+            var stores = (await _storeRepository.GetAllStoresAsync())
+            .Where(s => s.IsActive);
 
             //  var json = await File.ReadAllTextAsync("../GeoLinks.Services/data.json");
             // return JsonSerializer.Deserialize<Stores>(json, new JsonSerializerOptions
