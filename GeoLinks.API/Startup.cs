@@ -64,7 +64,9 @@ namespace GeoLinks.API
                         ValidateIssuerSigningKey = true,
                         ValidIssuers = Configuration["Jwt:Issuer"].Split(','),
                         ValidAudiences = Configuration["Jwt:Issuer"].Split(','),
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"])),
+                        NameClaimType = "name",
+                        RoleClaimType = "Role",
                     };
                 });
 

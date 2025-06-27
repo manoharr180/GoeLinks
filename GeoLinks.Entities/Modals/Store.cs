@@ -1,15 +1,11 @@
 using System.Collections.Generic;
 
-public class Stores
-{
-    public List<Store> stores { get; set; }
-}
 public class Store
     {
         public int StoreId { get; set; }
         public string StoreName { get; set; }
         public string StoreLogo { get; set; }
-        public List<StoreItemDetails> storeItems { get; set; }
+        public List<StoreItemDetails> StoreItemDetails { get; set; }
         
     }
 

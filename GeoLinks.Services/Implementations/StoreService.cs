@@ -29,15 +29,16 @@ namespace GeoLinks.Services.Implementations
             throw new System.NotImplementedException();
         }
 
-        public async Task<Stores> GetAllStoresAsync()
+        public async Task<List<Store>>  GetAllStoresAsync()
         {
             var stores = await _storeRepository.GetAllStoresAsync();
-          
-             var json = await File.ReadAllTextAsync("../GeoLinks.Services/data.json");
-            return JsonSerializer.Deserialize<Stores>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+
+            //  var json = await File.ReadAllTextAsync("../GeoLinks.Services/data.json");
+            // return JsonSerializer.Deserialize<Stores>(json, new JsonSerializerOptions
+            // {
+            //     PropertyNameCaseInsensitive = true
+            // });
+            return stores.ToList();
         }
 
         public Task<Store> GetStoreByIdAsync(int storeId)

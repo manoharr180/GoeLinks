@@ -1,33 +1,42 @@
 using GeoLinks.DataLayer.DalInterface;
-using GeoLinks.Entities.DbEntities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace GeoLinks.DataLayer.DalImplementation
 {
     public class StoreRepository : IStoreRepository
     {
         private readonly GeoLensContext _context;
+        private MapperConfiguration mapperconfig;
+        private IMapper mapper;
 
         public StoreRepository(GeoLensContext context)
         {
             _context = context;
+            mapperconfig = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<StoreDto, Store>();
+                cfg.CreateMap<Store, StoreDto>();
+                cfg.CreateMap<StoreItemDetailsDto, StoreItemDetails>();
+                cfg.CreateMap<StoreItemDetails, StoreItemDetailsDto>();
+            });
+            mapper = mapperconfig.CreateMapper();
         }
 
-        public async Task<List<StoreDto>> GetAllStoresAsync()
+        public async Task<List<Store>> GetAllStoresAsync()
         {
             var data = await _context.stores
             .Include(s => s.StoreItemDetails)
             .ToListAsync();
-            return data;
+            return mapper.Map<List<StoreDto>, List<Store>>(data);
         }
 
         public async Task<StoreDto> GetStoreByIdAsync(string id)
         {
             return await _context.stores
-            //.Include(s => s.storeItems)
+            .Include(s => s.StoreItemDetails)
                 .FirstOrDefaultAsync(s => s.StoreId == id);
         }
 
