@@ -33,12 +33,7 @@ namespace GeoLinks.Services.Implementations
         {
             var stores = (await _storeRepository.GetAllStoresAsync())
             .Where(s => s.IsActive);
-
-            //  var json = await File.ReadAllTextAsync("../GeoLinks.Services/data.json");
-            // return JsonSerializer.Deserialize<Stores>(json, new JsonSerializerOptions
-            // {
-            //     PropertyNameCaseInsensitive = true
-            // });
+            
             return stores.ToList();
         }
 
