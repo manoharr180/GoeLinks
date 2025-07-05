@@ -25,17 +25,10 @@ namespace GeoLinks.API.Controller
             this.profileService = profileService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetProfile([FromQuery]string mail)
+        public IActionResult GetProfile([FromQuery] string mail)
         {
-            string json = string.Empty;
 
-            using (StreamReader reader = new StreamReader("./Assets/data.json"))
-            {
-                json = reader.ReadToEnd();
-            }
-            //json = await profileService.GetS3ObjectContentAsync();
-                
-            return Ok(json);
+            return Ok("Hello from ProfileController! ");
         }
 
     }

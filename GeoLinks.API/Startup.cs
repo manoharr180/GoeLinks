@@ -104,16 +104,18 @@ namespace GeoLinks.API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
             app.UseRouting();
+
+            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

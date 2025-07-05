@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace GeoLinks.API
 {
     public class Program
+    //use GeoLinks.API as handler for AWS Lambda
     {
         public static void Main(string[] args)
         {
@@ -31,4 +32,5 @@ namespace GeoLinks.API
                     //dont use uselambdaserver when since everything is in the Startup.cs
                 });
     }
+
 }
