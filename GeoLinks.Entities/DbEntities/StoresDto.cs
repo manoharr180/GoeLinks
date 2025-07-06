@@ -71,4 +71,12 @@ public class StoreItemDetailsDto
 
     [Column("imageurl")]
     public string ImageUrl { get; set; }
+    [Column("createddatetime")]
+    public DateTime CreatedDatetime { get; set; }
+    [Column("modifieddatetime")]
+    public DateTime ModifieDatetime { get; set; }
+    [Column("variantid")]
+    public string VariantId { get; set; }
+    [Column("isactive")]
+    public bool IsActive { get; set; }
 }
