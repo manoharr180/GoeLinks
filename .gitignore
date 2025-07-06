@@ -3,9 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-#Publich
+#Publish
 publish.zip
 publish
+publish/
 
 # User-specific files
 *.rsuser
@@ -365,3 +366,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+GeoLinks.API/lambda.zip
+GeoLinks.API/.DS_Store
