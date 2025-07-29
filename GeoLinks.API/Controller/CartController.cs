@@ -18,10 +18,18 @@ namespace GeoLinks.API.Controller
         }
         private static readonly List<CartItemModal> Cart = new List<CartItemModal>();
 
-        [HttpGet("{userId}")]
-        public IActionResult GetCartItems(int userId)
+        [HttpGet]
+        public IActionResult GetCartItems()
         {
-            this.cartService.GetCartItems(userId);
+            
+            // var userIdClaim = User.FindFirst("userId");
+            // if (userIdClaim == null)
+            // {
+            //     return Unauthorized("User ID not found in token.");
+            // }
+            int userId = 1;
+            //int.Parse(userIdClaim.Value);
+
             var userCart = Cart.FindAll(item => item.UserId == userId);
             return Ok(userCart);
         }
@@ -29,13 +37,27 @@ namespace GeoLinks.API.Controller
         [HttpPost]
         public IActionResult AddItemToCart([FromBody] CartItemModal newItem)
         {
+            // var userIdClaim = User.FindFirst("userId");
+            // if (userIdClaim == null)
+            // {
+            //     return Unauthorized("User ID not found in token.");
+            // }
+            int userId = 1;
+            //int.Parse(userIdClaim.Value);
             Cart.Add(newItem);
             return CreatedAtAction(nameof(GetCartItems), new { userId = newItem.UserId }, newItem);
         }
 
-        [HttpPut("{userId}/{storeId}/{itemNumber}")]
-        public IActionResult UpdateCartItem(int userId, string storeId, int itemNumber, [FromBody] CartItemModal updatedItem)
+        [HttpPut("{storeId}/{itemNumber}")]
+        public IActionResult UpdateCartItem( string storeId, int itemNumber, [FromBody] CartItemModal updatedItem)
         {
+            // var userIdClaim = User.FindFirst("userId");
+            // if (userIdClaim == null)
+            // {
+            //     return Unauthorized("User ID not found in token.");
+            // }
+            int userId = 1;
+            //int.Parse(userIdClaim.Value);
             var existingItem = Cart.Find(item => item.UserId == userId && item.StoreId == storeId && item.ItemNumber == itemNumber);
             if (existingItem == null)
             {
@@ -46,9 +68,16 @@ namespace GeoLinks.API.Controller
             return NoContent();
         }
 
-        [HttpDelete("{userId}/{storeId}/{itemNumber}")]
-        public IActionResult DeleteCartItem(int userId, string storeId, int itemNumber)
+        [HttpDelete("{storeId}/{itemNumber}")]
+        public IActionResult DeleteCartItem(string storeId, int itemNumber)
         {
+            // var userIdClaim = User.FindFirst("userId");
+            // if (userIdClaim == null)
+            // {
+            //     return Unauthorized("User ID not found in token.");
+            // }
+            int userId = 1;
+            //int.Parse(userIdClaim.Value);
             var itemToRemove = Cart.Find(item => item.UserId == userId && item.StoreId == storeId && item.ItemNumber == itemNumber);
             if (itemToRemove == null)
             {
