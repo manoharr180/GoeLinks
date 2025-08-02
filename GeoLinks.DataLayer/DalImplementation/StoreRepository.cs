@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using GeoLinks.Entities.DbEntities;
 
 namespace GeoLinks.DataLayer.DalImplementation
 {
@@ -51,7 +52,6 @@ namespace GeoLinks.DataLayer.DalImplementation
             _context.stores.Update(store);
             await _context.SaveChangesAsync();
         }
-
         public async Task DeleteStoreAsync(string id)
         {
             var store = await _context.stores.FirstOrDefaultAsync(s => s.StoreId == id);

@@ -10,7 +10,7 @@ namespace GeoLinks.DataLayer.DalInterface
         Task AddToCartAsync(int userId, int productId, int quantity);
         Task RemoveFromCartAsync(int userId, int productId);
         Task UpdateCartItemAsync(int userId, int productId, int quantity);
-        Task<IEnumerable<CartItem>> GetCartItemsAsync(int userId);
+        Task<IEnumerable<CartItemDto>> GetCartItemsAsync(int userId);
         Task ClearCartAsync(int userId);
     }
 }

@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using GeoLinks.Entities.DbEntities;
 using GeoLinks.DataLayer.DalInterface;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 
@@ -36,10 +34,10 @@ namespace GeoLinks.DataLayer.DalImplementation
             // Add logic to update the quantity of a product in the user's cart in the database
         }
 
-        public async Task<IEnumerable<CartItem>> GetCartItemsAsync(int userId)
+        public async Task<IEnumerable<CartItemDto>> GetCartItemsAsync(int userId)
         {
             // Add logic to retrieve all items in the user's cart from the database
-            return new List<CartItem>();
+            return new List<CartItemDto>();
         }
 
         public async Task ClearCartAsync(int userId)

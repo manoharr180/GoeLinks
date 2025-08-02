@@ -58,7 +58,7 @@ namespace GeoLinks.API.Controller
             // }
             int userId = 1;
             //int.Parse(userIdClaim.Value);
-            var existingItem = Cart.Find(item => item.UserId == userId && item.StoreId == storeId && item.ItemNumber == itemNumber);
+            var existingItem = Cart.Find(item => item.UserId == userId && item.StoreId == storeId && item.ItemId == itemNumber);
             if (existingItem == null)
             {
                 return NotFound();
@@ -78,7 +78,7 @@ namespace GeoLinks.API.Controller
             // }
             int userId = 1;
             //int.Parse(userIdClaim.Value);
-            var itemToRemove = Cart.Find(item => item.UserId == userId && item.StoreId == storeId && item.ItemNumber == itemNumber);
+            var itemToRemove = Cart.Find(item => item.UserId == userId && item.StoreId == storeId && item.ItemId == itemNumber);
             if (itemToRemove == null)
             {
                 return NotFound();
