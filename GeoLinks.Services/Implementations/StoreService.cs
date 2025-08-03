@@ -24,7 +24,7 @@ namespace GeoLinks.Services.Implementations
             throw new System.NotImplementedException();
         }
 
-        public Task<bool> DeleteStoreAsync(int storeId)
+        public Task<bool> DeleteStoreAsync(string storeId)
         {
             throw new System.NotImplementedException();
         }
@@ -37,7 +37,7 @@ namespace GeoLinks.Services.Implementations
             return stores.ToList();
         }
 
-        public Task<Store> GetStoreByIdAsync(int storeId)
+        public Task<Store> GetStoreByIdAsync(string storeId)
         {
             throw new System.NotImplementedException();
         }

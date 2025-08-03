@@ -4,6 +4,7 @@ using GeoLinks.Entities.Modals;
 using GeoLinks.Services.Services;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace GeoLinks.API.Controller
 {
@@ -12,11 +13,13 @@ namespace GeoLinks.API.Controller
     public class CartController : ControllerBase
     {
         private ICartService  cartService;
-        public CartController(ICartService cartService)
+        private IStoreService storeService;
+        public CartController(ICartService cartService, IStoreService storeService)
         {
+            // Initialize the cart service
             this.cartService = cartService;
+            this.storeService = storeService;
         }
-        private static readonly List<CartItemModal> Cart = new List<CartItemModal>();
 
         [HttpGet]
         public IActionResult GetCartItems()
@@ -29,9 +32,7 @@ namespace GeoLinks.API.Controller
             // }
             int userId = 1;
             //int.Parse(userIdClaim.Value);
-
-            var userCart = Cart.FindAll(item => item.UserId == userId);
-            return Ok(userCart);
+            return Ok(this.cartService.GetCartItems(userId));
         }
 
         [HttpPost]
@@ -44,7 +45,15 @@ namespace GeoLinks.API.Controller
             // }
             int userId = 1;
             //int.Parse(userIdClaim.Value);
-            Cart.Add(newItem);
+            newItem.UserId = userId;
+            // var itemDetails = this.storeService.GetStoreByIdAsync(newItem.StoreId).Result
+            // .StoreItemDetails.Where(x => x.ItemId == newItem.ItemId).FirstOrDefault();
+            // if (itemDetails == null)
+            // {
+            //     return NotFound($"Item with ID {newItem.ItemId} not found in store {newItem.StoreId}.");
+            // }
+
+            this.cartService.AddToCart(newItem);
             return CreatedAtAction(nameof(GetCartItems), new { userId = newItem.UserId }, newItem);
         }
 
@@ -58,13 +67,7 @@ namespace GeoLinks.API.Controller
             // }
             int userId = 1;
             //int.Parse(userIdClaim.Value);
-            var existingItem = Cart.Find(item => item.UserId == userId && item.StoreId == storeId && item.ItemId == itemNumber);
-            if (existingItem == null)
-            {
-                return NotFound();
-            }
-
-            existingItem.Quantity = updatedItem.Quantity;
+            
             return NoContent();
         }
 
@@ -78,13 +81,6 @@ namespace GeoLinks.API.Controller
             // }
             int userId = 1;
             //int.Parse(userIdClaim.Value);
-            var itemToRemove = Cart.Find(item => item.UserId == userId && item.StoreId == storeId && item.ItemId == itemNumber);
-            if (itemToRemove == null)
-            {
-                return NotFound();
-            }
-
-            Cart.Remove(itemToRemove);
             return NoContent();
         }
     }

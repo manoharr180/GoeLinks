@@ -31,12 +31,12 @@ namespace GeoLinks.Entities.DbEntities
         public int Quantity { get; set; }
 
         [Column("createdon")]
-        public DateTime CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         [Column("isitemavailable")]
-        public bool IsItemAvailable { get; set; }
+        public bool IsItemAvailable { get; set; } = true;
 
         [Column("isactive")]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }
