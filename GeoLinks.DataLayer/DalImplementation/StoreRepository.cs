@@ -10,13 +10,13 @@ namespace GeoLinks.DataLayer.DalImplementation
     public class StoreRepository : IStoreRepository
     {
         private readonly GeoLensContext _context;
-        private MapperConfiguration mapperconfig;
         private IMapper mapper;
 
         public StoreRepository(GeoLensContext context)
         {
             _context = context;
-            mapperconfig = new MapperConfiguration(cfg =>
+
+            var mapperconfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<StoreDto, Store>();
                 cfg.CreateMap<Store, StoreDto>();

@@ -9,4 +9,5 @@ public class CartItemModal
     public int Quantity { get; set; } = 1;
     public System.DateTime CreatedOn { get; set; } = DateTime.UtcNow;
     public bool IsItemAvailable { get; set; } = true;
+    public bool IsActive { get; set; } = true;
 }
