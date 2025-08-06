@@ -41,12 +41,14 @@ namespace GeoLinks.API
             services.AddTransient<IAuthDal, AuthDal>();
             services.AddTransient<ICartRepository, CartRepository>();
             services.AddTransient<IStoreRepository, StoreRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             // Service layer
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IStoreService, StoreService>();
             services.AddTransient<ICartService, CartService>();
+            services.AddTransient<IUserServices, UserServices>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddAutoMapper(typeof(Startup));

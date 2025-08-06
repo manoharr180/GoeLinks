@@ -33,43 +33,13 @@ namespace GeoLinks.API.Controller
         [HttpPost]
         public ActionResult RegisterUser([FromBody]ProfileModal profileModal)
         {
-            int profileId = 0;
-            //for (int i=1; i<= 50; i++)
-            //{
-            //    profileId = this.authService.RegisterUser(new ProfileModal()
-            //    {
-            //        FName = "User"+i,
-            //        LName = "Lname",
-            //        BloodGroup= GenerateBloodGroup(),
-            //        CreatedOn =  DateTime.Now,
-            //        IsActive = true,
-            //        mailId="user"+i+"@gmail.com",
-            //        ModifiedOn = DateTime.Now,
-            //        Password = "user"+i+"1234",
-            //        PhoneNumber = "9901351374",
-            //        UserName= "User"+i
-            //    });
-            //}
-
-            profileId = this.authService.RegisterUser(profileModal);
+            int profileId = this.authService.RegisterUser(profileModal);
 
 
             if (profileId == 0)
                 return Conflict("Profile Already Exists");
             else
                 return Created("", profileId);
-        }
-
-        public string GenerateBloodGroup()
-        {
-            string bloodGroup = string.Empty;
-            string[] blood = { "A-", "A+", "B-","B+","O","O-","AB+","AB-"};
-
-            Random random = new Random();
-            int index = random.Next(blood.Length);
-            bloodGroup = blood[index];
-
-            return bloodGroup;
         }
 
         [AllowAnonymous]
