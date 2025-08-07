@@ -25,20 +25,7 @@ namespace GeoLinks.Services.Implementations
 
         public ProfileModal GetProfile(string user)
         {
-            //return this.profileService.GetProfile(user);
-            return new ProfileModal
-            {
-                FName = "Manohar",
-                BloodGroup = "A+",
-                CreatedOn = DateTime.Now,
-                IsActive = true,
-                LName = "R",
-                mailId = "manohar@gmail.com",
-                ModifiedOn = DateTime.Now,
-                PhoneNumber = "9901351377",
-                ProfileId = 1,
-                UserName = "manohar"
-            };
+            return this.profileService.GetProfile(user);
         }
 
         public async Task<string> GetS3ObjectContentAsync()

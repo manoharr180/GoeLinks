@@ -48,10 +48,10 @@ namespace GeoLinks.Entities.DbEntities
         [Column("ModifiedOn")]
         public DateTime? ModifiedOn { get; set; }
 
-        [Column("PasswordResetLimit")]
-        public int PasswordResetLimit { get; set; } = 0;
+        [Column("NumOfLogInAttempt")]
+        public int NumOfLogInAttempt { get; set; } = 0;
 
-        [ForeignKey("ProfileId")]
-        public ProfileDto? Profile { get; set; }
+        // [ForeignKey("ProfileId")]
+        // public ProfileDto? Profile { get; set; }
     }
 }

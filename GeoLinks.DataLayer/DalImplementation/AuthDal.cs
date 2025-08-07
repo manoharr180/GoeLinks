@@ -20,43 +20,79 @@ namespace GeoLinks.DataLayer.DalImplementation
         public AuthDal(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            mapperconfig = AutoMapperConfig.CreateMapperConfig<ProfileDto, ProfileModal>();
-            mapper = mapperconfig.CreateMapper();
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<ProfileDto, ProfileModal>();
+                cfg.CreateMap<ProfileModal, ProfileDto>();
+            });
+            mapper = mapperConfig.CreateMapper();
         }
         public int RegisterUser(ProfileModal profileModal)
         {
-            string password = profileModal.Password;
-            ProfileDto profileDto = mapper.Map<ProfileModal, ProfileDto>(profileModal);
-            this.unitOfWork.GenericProfileRepository.Insert(profileDto);
-            this.unitOfWork.GenericProfileRepository.Save();
-            if(profileDto.ProfileId > 0)
+            this.unitOfWork.CreateTransaction();
+            try
             {
-                string hashedPassword = passwordHasher.HashPassword(profileDto, password);
-                this.unitOfWork.GenericPasswordRepository.Insert(new Password()
+                var usersDto = new UsersDto()
                 {
-                    ProfileId = profileDto.ProfileId,
-                    HashedPassword = hashedPassword,
-                    IsBlocked = false,
-                    NumOfLogInAttempt = 0
-                }); 
-                this.unitOfWork.GenericPasswordRepository.Save();
+                    Email = profileModal.mailId,
+                    PhoneNumber = profileModal.PhoneNumber,
+                    CreatedOn = DateTime.UtcNow,
+                    ModifiedOn = DateTime.UtcNow,
+                    Username = profileModal.UserName,
+                    IsActive = true
+                };
+                string password = profileModal.Password;
+                ProfileDto profileDto = mapper.Map<ProfileModal, ProfileDto>(profileModal);
+
+
+                this.unitOfWork.GenericProfileRepository.Insert(profileDto);
+                this.unitOfWork.GenericProfileRepository.Save();
+                if (profileDto.ProfileId > 0)
+                {
+                    string hashedPassword = passwordHasher.HashPassword(profileDto, password);
+                    this.unitOfWork.GenericPasswordRepository.Insert(new UsersDto()
+                    {
+                        ProfileId = profileDto.ProfileId,
+                        PasswordHash = hashedPassword,
+                        IsActive = false,
+                        NumOfLogInAttempt = 0,
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedOn = DateTime.UtcNow,
+                        Email = profileModal.mailId,
+                        PhoneNumber = profileModal.PhoneNumber,
+                        Username = profileModal.UserName
+                    });
+                    this.unitOfWork.GenericPasswordRepository.Save();
+                    this.unitOfWork.Commit();
+                }
+                return profileDto.ProfileId;
             }
-            return profileDto.ProfileId;
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                this.unitOfWork.Rollback();
+                // Optionally, you can rethrow the exception or return a specific error code
+                Console.WriteLine($"Error during registration: {ex.Message}");
+                throw;
+            }
+            
         }
 
         public bool ValidateUser(string userMail, string phoneNum, string password)
         {
             SqlParameter paras =  new SqlParameter("user", userMail);
-                       
 
-            List<LoginUser> loginUser = this.unitOfWork.GenericLogInUserRepository.GetAll("select pf.ProfileId,pf.mailId,ps.HashedPassword,ps.IsBlocked, " +
-                "ps.NumOfLogInAttempt from Profile_Details pf" +
-                "  inner join Profile_Password ps on" +
-                "  pf.ProfileId = ps.ProfileId where pf.mailId = {0}", userMail).ToList();
+            string query = string.Format("SELECT usr.\"ProfileId\", usr.\"Email\", usr.\"PasswordHash\", usr.\"IsActive\", usr.\"NumOfLogInAttempt\" " +
+                           "FROM users usr " +
+                           "INNER JOIN profiledetails ps ON usr.\"ProfileId\" = ps.ProfileId " +
+                           "WHERE ps.mailid = '{0}'", userMail);
+
+            List<LoginUser> loginUser = this.unitOfWork.GenericLogInUserRepository
+            .GetAll(query).ToList();
             if (loginUser.Count > 1 || loginUser.Count == 0)
                 return false;
 
-            PasswordVerificationResult passwordVerificationResult = passwordHasher.VerifyHashedPassword(null, loginUser[0].HashedPassword, password);
+            PasswordVerificationResult passwordVerificationResult = passwordHasher.VerifyHashedPassword(null, loginUser[0].PasswordHash, password);
             if (passwordVerificationResult == PasswordVerificationResult.Success)
                 return true;
             else

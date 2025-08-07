@@ -9,9 +9,9 @@ namespace GeoLinks.Entities.DbEntities
     public class LoginUser
     {
         public int ProfileId { get; set; }
-        public string mailId { get; set; }
-        public string HashedPassword { get; set; }
-        public bool IsBlocked { get; set; }
+        public string Email { get; set; }
+        public string PasswordHash { get; set; }
+        public bool IsActive { get; set; }
         public Int16 NumOfLogInAttempt { get; set; }
     }
 }

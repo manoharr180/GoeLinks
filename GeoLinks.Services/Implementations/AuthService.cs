@@ -22,8 +22,8 @@ namespace GeoLinks.Services.Implementations
 
         public int RegisterUser(ProfileModal profileModal)
         {
-            profileModal.CreatedOn = DateTime.Now;
-            profileModal.ModifiedOn = DateTime.Now;
+            profileModal.CreatedOn = DateTime.UtcNow;
+            profileModal.ModifiedOn = DateTime.UtcNow;
             profileModal.IsActive = true;
             return this.authService.RegisterUser(profileModal);
         }

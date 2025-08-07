@@ -27,7 +27,7 @@ namespace GeoLinks.DataLayer.DalImplementation
             SqlParameter paras = new SqlParameter("user", userName);
 
             List<ProfileDto> loginUser = this.unitOfWork.GenericProfileRepository
-                .GetAll("select * from Profile_Details where mailId = {0}", userName).ToList();
+                .GetAll("select * from profiledetails where mailId = {0}", userName).ToList();
 
             ProfileDto profileDto = new ProfileDto();
             if (loginUser.Count == 1)

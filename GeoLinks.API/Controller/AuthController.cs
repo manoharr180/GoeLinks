@@ -49,7 +49,7 @@ namespace GeoLinks.API.Controller
         {
             //bool isValidUser = false;
             bool isValidUser = true;
-            //isValidUser = this.authService.ValidateUser(profileModal.mailId, profileModal.PhoneNumber, profileModal.Password);
+            isValidUser = this.authService.ValidateUser(profileModal.mailId, profileModal.PhoneNumber, profileModal.Password);
             if (isValidUser)
             {
                 string jwttoken = GenerateJsonWebToken(this.profileService.GetProfile(profileModal.mailId));

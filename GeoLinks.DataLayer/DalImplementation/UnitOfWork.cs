@@ -19,7 +19,7 @@ namespace GeoLinks.DataLayer.DalImplementation
         private IDbContextTransaction _objTran;
         private Dictionary<string, object> _repositories;
         private IGenericRepository<ProfileDto> genericProfileRepository;
-        private IGenericRepository<Password> genericPasswordRepository;
+        private IGenericRepository<UsersDto> genericPasswordRepository;
         private IGenericRepository<LoginUser> genericLogInRepository;
         private GeoLensContext geoLensContext;
         //Using the Constructor we are initializing the _context variable is nothing but
@@ -47,12 +47,12 @@ namespace GeoLinks.DataLayer.DalImplementation
             }
         }
 
-        public IGenericRepository<Password> GenericPasswordRepository
+        public IGenericRepository<UsersDto> GenericPasswordRepository
         {
             get
             {
                 if (this.genericPasswordRepository == null)
-                    this.genericPasswordRepository = new GenericRepository<Password>(this.geoLensContext);
+                    this.genericPasswordRepository = new GenericRepository<UsersDto>(this.geoLensContext);
                 return genericPasswordRepository;
             }
         }
