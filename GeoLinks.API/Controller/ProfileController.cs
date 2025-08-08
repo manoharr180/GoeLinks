@@ -13,8 +13,7 @@ using System.Net.Http;
 
 namespace GeoLinks.API.Controller
 {
-    //[Authorize]
-    [AllowAnonymous]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ProfileController : ControllerBase

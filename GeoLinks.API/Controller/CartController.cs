@@ -5,9 +5,11 @@ using GeoLinks.Services.Services;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GeoLinks.API.Controller
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CartController : ControllerBase

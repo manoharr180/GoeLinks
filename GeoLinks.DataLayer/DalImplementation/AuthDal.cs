@@ -14,7 +14,6 @@ namespace GeoLinks.DataLayer.DalImplementation
     public class AuthDal : IAuthDal
     {
         private IUnitOfWork unitOfWork { get; set; }
-        private MapperConfiguration mapperconfig;
         private IMapper mapper;
         private Authentication.PasswordHasher<ProfileDto> passwordHasher = new Authentication.PasswordHasher<ProfileDto>();
         public AuthDal(IUnitOfWork unitOfWork)
