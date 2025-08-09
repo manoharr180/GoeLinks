@@ -23,6 +23,8 @@ namespace GeoLinks.DataLayer.DalImplementation
             {
                 cfg.CreateMap<CartItemDto, CartItemModal>();
                 cfg.CreateMap<CartItemModal, CartItemDto>();
+                cfg.CreateMap<CartItemDetailsDto, CartItemModal>();
+                cfg.CreateMap<CartItemModal, CartItemDetailsDto>();
             });
             mapper = mapperConfig.CreateMapper();
         }
@@ -72,9 +74,9 @@ namespace GeoLinks.DataLayer.DalImplementation
         {
             try
             {
-                var cartItems = await _context.CartItemsDto
-                    .FromSqlRaw("SELECT CartItemId, UserId, Quantity, IsItemAvailable, IsActive, CreatedOn FROM getcartitems({0})", userId)
-                    .ToListAsync();
+                var cartItems = await _context.CartItemsDetailsDto
+                                    .FromSqlRaw("SELECT * FROM getcartitems({0})", userId)
+                .ToListAsync();
 
                 return mapper.Map<List<CartItemModal>>(cartItems);
             }
