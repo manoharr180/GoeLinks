@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GeoLinks.Entities.Modals;
 
 namespace GeoLinks.Services.Services
 {
     public interface ICartService
     {
-        void AddToCart(CartItemModal cartItem);
-        void RemoveFromCart(CartItemModal cartItem);
-        void UpdateCartItem(CartItemModal cartItem);
-        IEnumerable<CartItemModal> GetCartItems(int userId);
-        void ClearCart(int userId);
+        Task AddToCartAsync(CartItemModal cartItem);
+        Task RemoveFromCartAsync(CartItemModal cartItem);
+        Task UpdateCartItemAsync(CartItemModal cartItem);
+        Task<IEnumerable<CartItemModal>> GetCartItemsAsync(int userId);
+        Task ClearCartAsync(int userId);
     }
 }

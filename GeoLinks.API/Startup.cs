@@ -92,16 +92,17 @@ namespace GeoLinks.API
             services.AddDbContext<GeoLensContext>(options =>
                 options.UseNpgsql(
                     Configuration.GetConnectionString("GeoLensContext"),
-                    b => b.MigrationsAssembly("GeoLinks.DataLayer")
+                    b =>
+                    {
+                        b.MigrationsAssembly("GeoLinks.DataLayer");
+                        b.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(5),
+                            errorCodesToAdd: null
+                        );
+                    }
                 )
             );
-            // services.AddDbContext<GeoLensContext>(options =>
-            // {
-            //     options.UseSqlServer(Configuration.GetConnectionString("GeoLensContext"), builder =>
-            //     {
-            //         builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-            //     });
-            // });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

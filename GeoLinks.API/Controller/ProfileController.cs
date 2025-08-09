@@ -27,7 +27,9 @@ namespace GeoLinks.API.Controller
         public IActionResult GetProfile([FromQuery] string mail)
         {
 
-            return Ok("Hello from ProfileController! ");
+            return this.profileService.GetProfile(mail) != null ? 
+                Ok(this.profileService.GetProfile(mail)) : 
+                NotFound("Profile not found.");
         }
 
     }

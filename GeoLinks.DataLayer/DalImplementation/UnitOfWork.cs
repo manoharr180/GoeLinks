@@ -9,7 +9,7 @@ using System.Text;
 
 namespace GeoLinks.DataLayer.DalImplementation
 {
-    public class UnitOfWork : IUnitOfWork, IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
         //Here TContext is nothing but your DBContext class
         //In our example it is EmployeeDBContext class
@@ -21,6 +21,7 @@ namespace GeoLinks.DataLayer.DalImplementation
         private IGenericRepository<ProfileDto> genericProfileRepository;
         private IGenericRepository<UsersDto> genericPasswordRepository;
         private IGenericRepository<LoginUser> genericLogInRepository;
+        private IGenericRepository<CartItemDto> genericCartRepository;
         private GeoLensContext geoLensContext;
         //Using the Constructor we are initializing the _context variable is nothing but
         //we are storing the DBContext (EmployeeDBContext) object in _context variable
@@ -30,11 +31,11 @@ namespace GeoLinks.DataLayer.DalImplementation
         }
         //The Dispose() method is used to free unmanaged resources like files, 
         //database connections etc. at any time.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        // public void Dispose()
+        // {
+        //     Dispose(false);
+        //     GC.SuppressFinalize(this);
+        // }
         //This Context property will return the DBContext object i.e. (EmployeeDBContext) object
 
         public IGenericRepository<ProfileDto> GenericProfileRepository
@@ -54,6 +55,16 @@ namespace GeoLinks.DataLayer.DalImplementation
                 if (this.genericPasswordRepository == null)
                     this.genericPasswordRepository = new GenericRepository<UsersDto>(this.geoLensContext);
                 return genericPasswordRepository;
+            }
+        }
+
+        public IGenericRepository<CartItemDto> GenericCartRepository
+        {
+            get
+            {
+                if (this.genericCartRepository == null)
+                    this.genericCartRepository = new GenericRepository<CartItemDto>(this.geoLensContext);
+                return genericCartRepository;
             }
         }
 
@@ -102,13 +113,13 @@ namespace GeoLinks.DataLayer.DalImplementation
                 throw new Exception(_errorMessage, dbEx);
             }
         }
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-                if (disposing)
-                    this.geoLensContext.Dispose();
-            _disposed = true;
-        }
+        // protected virtual void Dispose(bool disposing)
+        // {
+        //     if (!_disposed)
+        //         if (disposing)
+        //             this.geoLensContext.Dispose();
+        //     _disposed = true;
+        // }
         public GenericRepository<T> GenericRepository<T>() where T : class
         {
             if (_repositories == null)

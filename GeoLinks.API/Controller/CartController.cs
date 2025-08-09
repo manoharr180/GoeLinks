@@ -34,7 +34,7 @@ namespace GeoLinks.API.Controller
             // }
             int userId = 1;
             //int.Parse(userIdClaim.Value);
-            return Ok(this.cartService.GetCartItems(userId));
+            return Ok(this.cartService.GetCartItemsAsync(userId));
         }
 
         [HttpPost]
@@ -55,7 +55,7 @@ namespace GeoLinks.API.Controller
             //     return NotFound($"Item with ID {newItem.ItemId} not found in store {newItem.StoreId}.");
             // }
 
-            this.cartService.AddToCart(newItem);
+            this.cartService.AddToCartAsync(newItem);
             return CreatedAtAction(nameof(GetCartItems), new { userId = newItem.UserId }, newItem);
         }
 

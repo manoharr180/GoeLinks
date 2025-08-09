@@ -11,6 +11,7 @@ namespace GeoLinks.DataLayer.DalInterface
         IGenericRepository<ProfileDto> GenericProfileRepository { get; }
         IGenericRepository<UsersDto> GenericPasswordRepository { get; }
         IGenericRepository<LoginUser> GenericLogInUserRepository { get; }
+        IGenericRepository<CartItemDto> GenericCartRepository { get; }
         void CreateTransaction();
         void Commit();
         void Rollback();

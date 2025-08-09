@@ -4,18 +4,21 @@ using GeoLinks.DataLayer.DalInterface;
 using System.Threading.Tasks;
 using System.Linq;
 using AutoMapper;
-using System.Data.Entity;
-
+using Microsoft.EntityFrameworkCore;
+using System;
 namespace GeoLinks.DataLayer.DalImplementation
 {
     public class CartRepository : ICartRepository
     {
         private readonly GeoLensContext _context;
+        private IUnitOfWork unitOfWork { get; set; }
         private readonly IMapper mapper;
 
-        public CartRepository(GeoLensContext context)
+        public CartRepository(GeoLensContext context, IUnitOfWork unitOfWork)
         {
-            _context = context;
+            this.unitOfWork = unitOfWork;
+            this._context = context;
+        
             var mapperConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<CartItemDto, CartItemModal>();
@@ -65,14 +68,24 @@ namespace GeoLinks.DataLayer.DalImplementation
             }
         }
 
-        public async Task<IEnumerable<CartItemModal>> GetCartItemsAsync(int userId)
+        public async Task<List<CartItemModal>> GetCartItemsAsync(int userId)
         {
-            var cartItems = await _context.CartItemsDto
-                .Where(c => c.UserId == userId && c.IsActive)
-                .ToListAsync();
+            try
+            {
+                var cartItems = await _context.CartItemsDto
+                    .FromSqlRaw("SELECT CartItemId, UserId, Quantity, IsItemAvailable, IsActive, CreatedOn FROM getcartitems({0})", userId)
+                    .ToListAsync();
 
-            return mapper.Map<List<CartItemModal>>(cartItems);
+                return mapper.Map<List<CartItemModal>>(cartItems);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                throw new Exception("Error retrieving cart items", ex);
+            }
         }
+
+        
 
         public async Task ClearCartAsync(int userId)
         {

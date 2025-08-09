@@ -13,52 +13,56 @@ namespace GeoLinks.Services.Implementations
 {
     public class CartService : ICartService
     {
-        // Example properties and methods for the CartService class
         private readonly ICartRepository _cartRepository;
+        private readonly IStoreService _storeService;
 
-        public CartService(ICartRepository cartRepository)
+        public CartService(ICartRepository cartRepository, IStoreService storeService)
         {
             _cartRepository = cartRepository;
+            _storeService = storeService;
         }
 
-        // Example method implementation from ICartService
-        public void AddToCart(CartItemModal cartItem)
+        public async Task AddToCartAsync(CartItemModal cartItem)
         {
-            // Check if the item already exists in the cart
-            var existingItem = _cartRepository.GetCartItemsAsync(cartItem.UserId).Result
-                .FirstOrDefault(ci => ci.ItemId == cartItem.ItemId && ci.UserId == cartItem.UserId);
+            var existingItems = await _cartRepository.GetCartItemsAsync(cartItem.UserId);
+            var existingItem = existingItems.FirstOrDefault(ci => ci.ItemId == cartItem.ItemId && ci.UserId == cartItem.UserId);
             if (existingItem != null)
             {
-                // Increase the quantity
                 existingItem.Quantity += cartItem.Quantity;
-                _cartRepository.UpdateCartItemAsync(existingItem).Wait();
+                await _cartRepository.UpdateCartItemAsync(existingItem);
             }
             else
             {
-                // Add new item to cart
-                _cartRepository.AddToCartAsync(cartItem);
+                await _cartRepository.AddToCartAsync(cartItem);
             }
         }
 
-        public void RemoveFromCart(CartItemModal cartItem)
+        public async Task RemoveFromCartAsync(CartItemModal cartItem)
         {
-            // Add logic to remove the product from the user's cart
+            await _cartRepository.RemoveFromCartAsync(cartItem);
         }
 
-        public void UpdateCartItem(CartItemModal cartItem)
+        public async Task UpdateCartItemAsync(CartItemModal cartItem)
         {
-            // Add logic to update the quantity of a product in the user's cart
+            await _cartRepository.UpdateCartItemAsync(cartItem);
         }
 
-        public IEnumerable<CartItemModal> GetCartItems(int userId)
+        public async Task<IEnumerable<CartItemModal>> GetCartItemsAsync(int userId)
         {
-            // Add logic to retrieve all items in the user's cart
-            return new List<CartItemModal>();
+            var cartDetails = _cartRepository.GetCartItemsAsync(userId).Result;
+            if (cartDetails == null || !cartDetails.Any())
+            {
+                return new List<CartItemModal>();
+            }
+
+            // Optionally, you can fetch store details for each cart item if needed
+           
+            return await _cartRepository.GetCartItemsAsync(userId);
         }
 
-        public void ClearCart(int userId)
+        public async Task ClearCartAsync(int userId)
         {
-            // Add logic to clear all items from the user's cart
+            await _cartRepository.ClearCartAsync(userId);
         }
     }
     

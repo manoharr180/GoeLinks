@@ -18,6 +18,7 @@ namespace GeoLinks.DataLayer
         public DbSet<StoreItemDetailsDto> StoreItemDetailsDtos { get; set; }
         public DbSet<OrderDto> Orders { get; set; }
         public DbSet<CartItemDto> CartItemsDto { get; set; }
+        // public DbSet<CartItemDetailsDto> CartItemsDetailsDto { get; set; }
         public DbSet<UsersDto> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

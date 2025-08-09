@@ -38,12 +38,6 @@ namespace GeoLinks.Services.Implementations
                     Key = "data.json"
                 };
 
-                // var response = await externalApiService.ReadAsync("ttphs://manva-stores-data.s3.us-east-1.amazonaws.com/data.json");
-                //  using (var reader = new StreamReader(response.ResponseStream))
-                //  {
-                //      string content = await reader.ReadToEndAsync();
-                //      return response;
-                //  }
                 return string.Empty;
             }
             catch (Exception ex)
