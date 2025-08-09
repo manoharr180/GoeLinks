@@ -16,7 +16,7 @@ namespace GeoLinks.API.Controller
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class ProfileController : ControllerBase
+    public class ProfileController : AppControllerBase
     {
         private IProfileService profileService;
         public ProfileController(IProfileService profileService)

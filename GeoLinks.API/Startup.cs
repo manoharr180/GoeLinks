@@ -54,6 +54,13 @@ namespace GeoLinks.API
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
 
+            // Session management
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+                options.Cookie.HttpOnly = true; // Make the session cookie HTTP-only
+                options.Cookie.IsEssential = true; // Make the session cookie essential
+            });
             // Authentication
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

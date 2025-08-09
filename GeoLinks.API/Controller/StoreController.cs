@@ -6,7 +6,7 @@ namespace GeoLinks.API.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StoreController : ControllerBase
+    public class StoreController : AppControllerBase
     {
         private readonly IStoreService storeService;
 

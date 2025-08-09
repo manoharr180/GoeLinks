@@ -12,79 +12,65 @@ namespace GeoLinks.API.Controller
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class CartController : ControllerBase
+    public class CartController : AppControllerBase
     {
-        private ICartService  cartService;
-        private IStoreService storeService;
+        private readonly ICartService cartService;
+        private readonly IStoreService storeService;
+
         public CartController(ICartService cartService, IStoreService storeService)
         {
-            // Initialize the cart service
             this.cartService = cartService;
             this.storeService = storeService;
         }
 
         [HttpGet]
-        public IActionResult GetCartItems()
+        public async Task<IActionResult> GetCartItems()
         {
-            
-            // var userIdClaim = User.FindFirst("userId");
-            // if (userIdClaim == null)
-            // {
-            //     return Unauthorized("User ID not found in token.");
-            // }
-            int userId = 1;
-            //int.Parse(userIdClaim.Value);
-            return Ok(this.cartService.GetCartItemsAsync(userId));
+            if (CurrentUserId == null)
+                return Unauthorized("User ID not found in token.");
+
+            var items = await cartService.GetCartItemsAsync(CurrentUserId.Value);
+            return Ok(items);
         }
 
         [HttpPost]
-        public IActionResult AddItemToCart([FromBody] CartItemModal newItem)
+        public async Task<IActionResult> AddItemToCart([FromBody] CartItemModal newItem)
         {
-            // var userIdClaim = User.FindFirst("userId");
-            // if (userIdClaim == null)
-            // {
-            //     return Unauthorized("User ID not found in token.");
-            // }
-            int userId = 1;
-            //int.Parse(userIdClaim.Value);
-            newItem.UserId = userId;
-            // var itemDetails = this.storeService.GetStoreByIdAsync(newItem.StoreId).Result
-            // .StoreItemDetails.Where(x => x.ItemId == newItem.ItemId).FirstOrDefault();
-            // if (itemDetails == null)
-            // {
-            //     return NotFound($"Item with ID {newItem.ItemId} not found in store {newItem.StoreId}.");
-            // }
+            if (CurrentUserId == null)
+                return Unauthorized("User ID not found in token.");
 
-            this.cartService.AddToCartAsync(newItem);
+            newItem.UserId = CurrentUserId.Value;
+            await cartService.AddToCartAsync(newItem);
             return CreatedAtAction(nameof(GetCartItems), new { userId = newItem.UserId }, newItem);
         }
 
         [HttpPut("{storeId}/{itemNumber}")]
-        public IActionResult UpdateCartItem( string storeId, int itemNumber, [FromBody] CartItemModal updatedItem)
+        public async Task<IActionResult> UpdateCartItem(string storeId, int itemNumber, [FromBody] CartItemModal updatedItem)
         {
-            // var userIdClaim = User.FindFirst("userId");
-            // if (userIdClaim == null)
-            // {
-            //     return Unauthorized("User ID not found in token.");
-            // }
-            int userId = 1;
-            //int.Parse(userIdClaim.Value);
-            
+            if (CurrentUserId == null)
+                return Unauthorized("User ID not found in token.");
+
+            updatedItem.UserId = CurrentUserId.Value;
+            // Optionally set storeId and itemNumber if needed
+            await cartService.UpdateCartItemAsync(updatedItem);
             return NoContent();
         }
 
         [HttpDelete("{storeId}/{itemNumber}")]
-        public IActionResult DeleteCartItem(string storeId, int itemNumber)
+        public async Task<IActionResult> DeleteCartItem(string storeId, int itemNumber)
         {
-            // var userIdClaim = User.FindFirst("userId");
-            // if (userIdClaim == null)
-            // {
-            //     return Unauthorized("User ID not found in token.");
-            // }
-            int userId = 1;
-            //int.Parse(userIdClaim.Value);
+            if (CurrentUserId == null)
+                return Unauthorized("User ID not found in token.");
+
+            // You may need to construct a CartItemModal or pass identifiers as needed
+            var itemToRemove = new CartItemModal
+            {
+                UserId = CurrentUserId.Value,
+                StoreId = storeId,
+                ItemId = itemNumber
+            };
+            await cartService.RemoveFromCartAsync(itemToRemove);
             return NoContent();
         }
     }
-
 }
