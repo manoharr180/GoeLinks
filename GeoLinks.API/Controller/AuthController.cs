@@ -47,14 +47,14 @@ namespace GeoLinks.API.Controller
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
-        public async Task<ActionResult> Login([FromBody] ProfileModal profileModal)
+        public ActionResult Login([FromBody] ProfileModal profileModal)
         {
             try
             {
                 bool isValidUser = this.authService.ValidateUser(profileModal.mailId, profileModal.PhoneNumber, profileModal.Password);
                 if (isValidUser)
                 {
-                    string jwttoken = await GenerateJsonWebToken(this.profileService.GetProfile(profileModal.mailId));
+                    string jwttoken = GenerateJsonWebToken(this.profileService.GetProfile(profileModal.mailId));
                     return Ok(new
                     {
                         token = jwttoken,
@@ -71,7 +71,7 @@ namespace GeoLinks.API.Controller
             
         }
 
-        private async Task<string> GenerateJsonWebToken(ProfileModal profileModal)
+        private string GenerateJsonWebToken(ProfileModal profileModal)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
