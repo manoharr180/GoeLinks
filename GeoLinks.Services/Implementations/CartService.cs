@@ -6,7 +6,6 @@ using GeoLinks.Entities.DbEntities;
 using System;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using GeoLinks.DataLayer.GenericRepository;
 
 namespace GeoLinks.Services.Implementations

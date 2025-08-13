@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using GeoLinks.Entities.Modals;
 using GeoLinks.Services.Services;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GeoLinks.API.Controller
@@ -56,8 +52,8 @@ namespace GeoLinks.API.Controller
             return NoContent();
         }
 
-        [HttpDelete("{storeId}/{itemNumber}")]
-        public async Task<IActionResult> DeleteCartItem(string storeId, int itemNumber)
+        [HttpDelete("{itemNumber}")]
+        public async Task<IActionResult> DeleteCartItem(int itemNumber)
         {
             if (CurrentUserId == null)
                 return Unauthorized("User ID not found in token.");
@@ -65,12 +61,22 @@ namespace GeoLinks.API.Controller
             // You may need to construct a CartItemModal or pass identifiers as needed
             var itemToRemove = new CartItemModal
             {
-                UserId = CurrentUserId.Value,
-                StoreId = storeId,
-                ItemId = itemNumber
+                CartItemId = itemNumber,
+                UserId = CurrentUserId.Value
             };
             await cartService.RemoveFromCartAsync(itemToRemove);
-            return NoContent();
+            return Ok();
+        }
+
+        [HttpDelete()]
+        public async Task<IActionResult> DeleteCartItem()
+        {
+            if (CurrentUserId == null)
+                return Unauthorized("User ID not found in token.");
+
+            
+            await cartService.ClearCartAsync(CurrentUserId.Value);
+            return Ok();
         }
     }
 }
