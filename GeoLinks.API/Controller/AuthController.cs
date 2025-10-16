@@ -23,11 +23,16 @@ namespace GeoLinks.API.Controller
         private IConfiguration configuration;
         private IAuthService authService;
         private IProfileService profileService;
-        public AuthController(IAuthService authService, IConfiguration configuration, IProfileService profileService)
+        private IEmailService emailService;
+        private ISmsService smsService;
+
+        public AuthController(IAuthService authService, IConfiguration configuration, IProfileService profileService, IEmailService emailService, ISmsService smsService)
         {
             this.authService = authService;
             this.configuration = configuration;
             this.profileService = profileService;
+            this.emailService = emailService;
+            this.smsService = smsService;
         }
 
         [AllowAnonymous]
@@ -102,7 +107,7 @@ namespace GeoLinks.API.Controller
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [Route("logout")]
         [HttpPost]
         public IActionResult Logout()
@@ -120,6 +125,47 @@ namespace GeoLinks.API.Controller
 
             // Instruct client to remove JWT (e.g., by removing from storage)
             return Ok(new { message = "Logged out successfully. Please remove the JWT token from your client." });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password-request")]
+        public async Task<IActionResult> ResetPasswordRequest([FromBody] string userIdentifier)
+        {
+            // userIdentifier can be email or phone number
+            var user = await authService.FindUserByEmailOrPhoneAsync(userIdentifier);
+            if (user == null)
+                return NotFound("User not found.");
+
+            // Generate OTP
+            var otp = new Random().Next(100000, 999999).ToString();
+
+            // Store OTP in DB or cache with expiry (pseudo-code)
+            await authService.StoreOtpAsync(user.ProfileId, otp);
+
+            // Send OTP to email or phone
+            if (!string.IsNullOrEmpty(user.mailId))
+            {
+                await emailService.SendAsync(user.mailId, "Your OTP Code", $"Your OTP is: {otp}");
+            }
+            else if (!string.IsNullOrEmpty(user.PhoneNumber))
+            {
+                await smsService.SendAsync(user.PhoneNumber, $"Your OTP is: {otp}");
+            }
+
+            return Ok("OTP sent.");
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password-confirm")]
+        public async Task<IActionResult> ResetPasswordConfirm([FromBody] ResetPasswordModel model)
+        {
+            // model: { UserId, Otp, NewPassword }
+            var isValid = await authService.ValidateOtpAsync(model.UserId, model.Otp);
+            if (!isValid)
+                return BadRequest("Invalid OTP.");
+
+            await authService.UpdatePasswordAsync(model.UserId, model.NewPassword);
+            return Ok("Password reset successful.");
         }
     }
 }

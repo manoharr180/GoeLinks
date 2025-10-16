@@ -42,6 +42,8 @@ namespace GeoLinks.API
             services.AddTransient<ICartRepository, CartRepository>();
             services.AddTransient<IStoreRepository, StoreRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<ISmsDal, SmsDal>();
+            services.AddTransient<IEmailDal, EmailDal>();
 
             // Service layer
             services.AddTransient<IProfileService, ProfileService>();
@@ -49,6 +51,8 @@ namespace GeoLinks.API
             services.AddTransient<IStoreService, StoreService>();
             services.AddTransient<ICartService, CartService>();
             services.AddTransient<IUserServices, UserServices>();
+            services.AddTransient<ISmsService, SmsService>();
+            services.AddTransient<IEmailService, EmailService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddAutoMapper(typeof(Startup));
