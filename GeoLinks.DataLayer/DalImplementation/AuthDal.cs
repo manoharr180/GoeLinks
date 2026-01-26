@@ -68,9 +68,6 @@ namespace GeoLinks.DataLayer.DalImplementation
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed
-              //  this.unitOfWork.Rollback();
-                // Optionally, you can rethrow the exception or return a specific error code
                 Console.WriteLine($"Error during registration: {ex.Message}");
                 throw;
             }

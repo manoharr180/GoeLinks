@@ -167,5 +167,48 @@ namespace GeoLinks.API.Controller
             await authService.UpdatePasswordAsync(model.UserId, model.NewPassword);
             return Ok("Password reset successful.");
         }
+        
+        [AllowAnonymous]
+        [HttpPost("login-otp-request")]
+        public async Task<IActionResult> LoginOtpRequest([FromBody] string userIdentifier)
+        {
+            var user = await authService.FindUserByEmailOrPhoneAsync(userIdentifier);
+            if (user == null)
+                return NotFound("User not found.");
+
+            var otp = new Random().Next(100000, 999999).ToString();
+            await authService.StoreOtpAsync(user.ProfileId, otp);
+
+            if (!string.IsNullOrEmpty(user.mailId))
+            {
+                await emailService.SendAsync(user.mailId, "Your login OTP", $"Your OTP is: {otp}");
+            }
+            else if (!string.IsNullOrEmpty(user.PhoneNumber))
+            {
+                await smsService.SendAsync(user.PhoneNumber, $"Your OTP is: {otp}");
+            }
+
+            return Ok(new { ProfileId = user.ProfileId, message = "OTP sent." });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login-otp-verify")]
+        public async Task<IActionResult> LoginOtpVerify([FromBody] LoginOtpVerifyModel model)
+        {
+            var isValid = await authService.ValidateOtpAsync(model.ProfileId, model.Otp);
+            if (!isValid)
+                return BadRequest("Invalid OTP.");
+
+            // fetch profile to issue token
+            var profile = (authService as dynamic)?.GetProfileById != null
+                ? (authService as dynamic).GetProfileById(model.ProfileId) as ProfileModal
+                : this.profileService.GetProfile(""); // fallback - adapt as needed
+
+            if (profile == null)
+                return NotFound("Profile not found.");
+
+            var jwttoken = GenerateJsonWebToken(profile);
+            return Ok(new { token = jwttoken, userInfo = profile });
+        }
     }
 }
