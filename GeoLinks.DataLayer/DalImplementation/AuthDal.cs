@@ -103,11 +103,28 @@ namespace GeoLinks.DataLayer.DalImplementation
                 var userIdDto = 0;
                 if (userId > 0)
                 {
+                    // Expire any existing non-expired OTP entries for this user
+                    var existing = this.unitOfWork.GenericResetPasswordRepository
+                        .GetAll($"SELECT * FROM resetpassword WHERE \"userid\" = {userId} AND \"isexpired\" IS NOT TRUE")
+                        .ToList();
+
+                    if (existing != null && existing.Count > 0)
+                    {
+                        foreach (var e in existing)
+                        {
+                            e.IsExpired = true;
+                            e.ModifiedOn = DateTime.UtcNow;
+                            this.unitOfWork.GenericResetPasswordRepository.Update(e);
+                        }
+                        this.unitOfWork.GenericResetPasswordRepository.Save();
+                    }
+
                     string hashedPassword = otpHasher.HashPassword(null, otp);
                     var resetPasswordDto = new ResetPasswordDto()
                     {
                         UserId = userId,
                         Otp = hashedPassword,
+                        IsExpired = false,
                         CreatedOn = DateTime.UtcNow,
                         ModifiedOn = DateTime.UtcNow
                     };
