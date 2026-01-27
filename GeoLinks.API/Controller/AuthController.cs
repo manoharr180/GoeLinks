@@ -180,14 +180,14 @@ namespace GeoLinks.API.Controller
             var otp = new Random().Next(100000, 999999).ToString();
             await authService.StoreOtpAsync(user.ProfileId, otp);
 
-            if (!string.IsNullOrEmpty(user.mailId))
-            {
-                await emailService.SendAsync(user.mailId, "Your login OTP", $"Your OTP is: {otp}");
-            }
-            else if (!string.IsNullOrEmpty(user.PhoneNumber))
-            {
-                await smsService.SendAsync(user.PhoneNumber, $"Your OTP is: {otp}");
-            }
+            // if (!string.IsNullOrEmpty(user.mailId))
+            // {
+            //     await emailService.SendAsync(user.mailId, "Your login OTP", $"Your OTP is: {otp}");
+            // }
+            // else if (!string.IsNullOrEmpty(user.PhoneNumber))
+            // {
+            //     await smsService.SendAsync(user.PhoneNumber, $"Your OTP is: {otp}");
+            // }
 
             return Ok(new { ProfileId = user.ProfileId, message = "OTP sent." });
         }
@@ -201,9 +201,8 @@ namespace GeoLinks.API.Controller
                 return BadRequest("Invalid OTP.");
 
             // fetch profile to issue token
-            var profile = (authService as dynamic)?.GetProfileById != null
-                ? (authService as dynamic).GetProfileById(model.ProfileId) as ProfileModal
-                : this.profileService.GetProfile(""); // fallback - adapt as needed
+            // Fetch profile using profileService to avoid runtime binder issues with dynamic calls.
+            var profile = this.profileService.GetProfileById(model.ProfileId);
 
             if (profile == null)
                 return NotFound("Profile not found.");

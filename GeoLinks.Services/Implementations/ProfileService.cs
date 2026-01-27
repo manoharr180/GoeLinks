@@ -27,6 +27,10 @@ namespace GeoLinks.Services.Implementations
         {
             return this.profileService.GetProfile(user);
         }
+        public ProfileModal GetProfileById(int profileId)
+        {
+            return this.profileService.GetProfileById(profileId);
+        }
 
         public async Task<string> GetS3ObjectContentAsync()
         {

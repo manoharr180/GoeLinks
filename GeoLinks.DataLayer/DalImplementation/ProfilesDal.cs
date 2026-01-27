@@ -34,8 +34,23 @@ namespace GeoLinks.DataLayer.DalImplementation
             {
                 profileDto = loginUser.FirstOrDefault();
             }
-            
-            return mapper.Map<ProfileDto,ProfileModal>(profileDto);
+
+            return mapper.Map<ProfileDto, ProfileModal>(profileDto);
+        }
+        public ProfileModal GetProfileById(int profileId)
+        {
+            SqlParameter paras = new SqlParameter("profileId", profileId);
+
+            List<ProfileDto> profileList = this.unitOfWork.GenericProfileRepository
+                .GetAll("select * from profiledetails where profileid = {0}", profileId).ToList();
+
+            ProfileDto profileDto = new ProfileDto();
+            if (profileList.Count == 1)
+            {
+                profileDto = profileList.FirstOrDefault();
+            }
+
+            return mapper.Map<ProfileDto, ProfileModal>(profileDto);
         }
     }
 }

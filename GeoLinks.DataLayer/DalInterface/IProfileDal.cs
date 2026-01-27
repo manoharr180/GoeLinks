@@ -9,5 +9,6 @@ namespace GeoLinks.DataLayer.DalInterface
     public interface IProfileDal
     {
         ProfileModal GetProfile(string userName);
+        ProfileModal GetProfileById(int profileId);
     }
 }

@@ -144,12 +144,12 @@ namespace GeoLinks.DataLayer.DalImplementation
         {
             try
             {
-                string query = string.Format("SELECT rp.\"UserId\", rp.\"Otp\" " +
+                string query = string.Format("SELECT rp.* " +
                                              "FROM resetpassword rp " +
-                                             "WHERE rp.\"UserId\" = {0} AND rp.\"IsExpired\" IS NOT TRUE " +
-                                             "ORDER BY rp.\"CreatedOn\" DESC LIMIT 1", userId);
+                                             "WHERE rp.\"userid\" = {0} AND rp.\"isexpired\" IS NOT TRUE " +
+                                             "ORDER BY rp.\"created_on\" DESC LIMIT 1", userId);
 
-                var resetEntries = this.unitOfWork.GenericResetPasswordRepository
+                var resetEntries = unitOfWork.GenericResetPasswordRepository
                     .GetAll(query)
                     .ToList();
 
