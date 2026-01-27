@@ -12,6 +12,7 @@ namespace GeoLinks.DataLayer.DalInterface
         IGenericRepository<UsersDto> GenericPasswordRepository { get; }
         IGenericRepository<LoginUser> GenericLogInUserRepository { get; }
         IGenericRepository<CartItemDto> GenericCartRepository { get; }
+        IGenericRepository<ResetPasswordDto> GenericResetPasswordRepository { get; }
         void CreateTransaction();
         void Commit();
         void Rollback();

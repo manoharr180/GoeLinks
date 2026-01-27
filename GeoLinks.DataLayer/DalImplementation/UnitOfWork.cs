@@ -22,6 +22,7 @@ namespace GeoLinks.DataLayer.DalImplementation
         private IGenericRepository<UsersDto> genericPasswordRepository;
         private IGenericRepository<LoginUser> genericLogInRepository;
         private IGenericRepository<CartItemDto> genericCartRepository;
+        private IGenericRepository<ResetPasswordDto> genericResetPasswordRepository;
         private GeoLensContext geoLensContext;
         //Using the Constructor we are initializing the _context variable is nothing but
         //we are storing the DBContext (EmployeeDBContext) object in _context variable
@@ -77,6 +78,15 @@ namespace GeoLinks.DataLayer.DalImplementation
                 return genericLogInRepository;
             }
         }
+        public IGenericRepository<ResetPasswordDto> GenericResetPasswordRepository
+        {
+            get
+            {
+                if (this.genericResetPasswordRepository == null)
+                    this.genericResetPasswordRepository = new GenericRepository<ResetPasswordDto>(this.geoLensContext);
+                return genericResetPasswordRepository;
+            }
+        }   
 
         //This CreateTransaction() method will create a database Trnasaction so that we can do database operations by
         //applying do evrything and do nothing principle

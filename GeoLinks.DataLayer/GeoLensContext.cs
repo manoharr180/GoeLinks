@@ -20,6 +20,7 @@ namespace GeoLinks.DataLayer
         public DbSet<CartItemDto> CartItemsDto { get; set; }
         public DbSet<CartItemDetailsDto> CartItemsDetailsDto { get; set; }
         public DbSet<UsersDto> Users { get; set; }
+        public DbSet<ResetPasswordDto> ResetPasswords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,8 +62,14 @@ namespace GeoLinks.DataLayer
             modelBuilder.Entity<UsersDto>()
                 .Property(u => u.Id)
                 .ValueGeneratedOnAdd();
-                
+
             modelBuilder.Entity<CartItemDetailsDto>().HasNoKey();
+
+            modelBuilder.Entity<ResetPasswordDto>()
+                .HasKey(rp => rp.Id);
+            modelBuilder.Entity<ResetPasswordDto>()
+                .Property(rp => rp.Id)
+                .ValueGeneratedOnAdd();
         }
     }
 }

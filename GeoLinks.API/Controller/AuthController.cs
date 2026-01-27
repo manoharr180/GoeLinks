@@ -167,12 +167,13 @@ namespace GeoLinks.API.Controller
             await authService.UpdatePasswordAsync(model.UserId, model.NewPassword);
             return Ok("Password reset successful.");
         }
-        
+
         [AllowAnonymous]
         [HttpPost("login-otp-request")]
-        public async Task<IActionResult> LoginOtpRequest([FromBody] string userIdentifier)
+        public async Task<IActionResult> LoginOtpRequest([FromBody] string email)
         {
-            var user = await authService.FindUserByEmailOrPhoneAsync(userIdentifier);
+        
+            var user = await authService.FindUserByEmailOrPhoneAsync(email);
             if (user == null)
                 return NotFound("User not found.");
 

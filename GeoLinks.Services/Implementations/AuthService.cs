@@ -31,17 +31,18 @@ namespace GeoLinks.Services.Implementations
 
         public Task<ProfileModal> FindUserByEmailOrPhoneAsync(string userIdentifier)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(authService.FindUserByEmailOrPhone(userIdentifier));
         }
 
         public Task StoreOtpAsync(int userId, string otp)
         {
-            throw new NotImplementedException();
+            authService.StoreOtp(userId, otp);
+            return Task.CompletedTask;
         }
 
         public Task<bool> ValidateOtpAsync(int userId, string otp)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(authService.ValidateOtp(userId, otp));
         }
 
         public Task UpdatePasswordAsync(int userId, string newPassword)

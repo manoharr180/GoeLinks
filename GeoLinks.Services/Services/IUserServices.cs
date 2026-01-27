@@ -13,5 +13,5 @@ public interface IUserServices
     Task DeleteUserAsync(int userId);
     Task UpdateRolesAsync(int userId, string newRole);
     Task<IEnumerable<Users>> GetAllUsersAsync();
-    Task<Users?> VerifyUserAsync(string username, string password);
+    Task<Users> VerifyUserAsync(string username, string password);
 }

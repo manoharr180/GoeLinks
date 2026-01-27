@@ -44,7 +44,7 @@ private readonly IUserRepository _userRepository;
         await _userRepository.UpdateUserAsync(user);
     }
 
-    public async Task<Users?> VerifyUserAsync(string username, string password)
+    public async Task<Users> VerifyUserAsync(string username, string password)
     {
         return await _userRepository.VerifyUserAsync(username, password);
     }

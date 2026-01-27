@@ -9,5 +9,9 @@ namespace GeoLinks.DataLayer.DalInterface
     {
         int RegisterUser(ProfileModal profileModal);
         bool ValidateUser(string userMail, string phoneNum, string password);
+        bool StoreOtp(int userId, string otp);
+        bool ValidateOtp(int userId, string otp);
+        bool UpdatePassword(int userId, string newPassword);
+        ProfileModal FindUserByEmailOrPhone(string emailOrPhone);
     }
 }
