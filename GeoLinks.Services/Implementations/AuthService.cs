@@ -47,7 +47,8 @@ namespace GeoLinks.Services.Implementations
 
         public Task UpdatePasswordAsync(int userId, string newPassword)
         {
-            throw new NotImplementedException();
+            authService.UpdatePassword(userId, newPassword);
+            return Task.CompletedTask;
         }
     }
 }

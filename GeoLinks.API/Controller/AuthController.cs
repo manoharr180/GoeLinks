@@ -157,14 +157,51 @@ namespace GeoLinks.API.Controller
 
         [AllowAnonymous]
         [HttpPost("reset-password-confirm")]
-        public async Task<IActionResult> ResetPasswordConfirm([FromBody] ResetPasswordModel model)
+        public async Task<IActionResult> ResetPasswordConfirm([FromBody] int userid, string newPassword)
         {
-            // model: { UserId, Otp, NewPassword }
-            var isValid = await authService.ValidateOtpAsync(model.UserId, model.Otp);
-            if (!isValid)
-                return BadRequest("Invalid OTP.");
+            // Validate JWT from Authorization header before allowing password update
+            var authHeader = HttpContext.Request.Headers["Authorization"].ToString();
+            if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            return Unauthorized("Missing or invalid Authorization header.");
 
-            await authService.UpdatePasswordAsync(model.UserId, model.NewPassword);
+            var token = authHeader.Substring("Bearer ".Length).Trim();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(this.configuration["Jwt:key"]);
+
+            try
+            {
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = this.configuration["Jwt:Issuer"],
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+
+            // Ensure token's ProfileId claim matches the user requesting the reset
+            var tokenProfileId = principal.FindFirst("ProfileId")?.Value;
+            if (string.IsNullOrEmpty(tokenProfileId) || tokenProfileId != userid.ToString())
+                return Unauthorized("Token does not match the target user.");
+            }
+            catch (SecurityTokenExpiredException)
+            {
+            return Unauthorized("Token has expired.");
+            }
+            catch (Exception)
+            {
+            return Unauthorized("Invalid token.");
+            }
+
+            // model: { UserId, Otp, NewPassword }
+            // var isValid = await authService.ValidateOtpAsync(model.UserId, model.Otp);
+            // if (!isValid)
+            // return BadRequest("Invalid OTP.");
+
+            await authService.UpdatePasswordAsync(userid, newPassword);
             return Ok("Password reset successful.");
         }
 

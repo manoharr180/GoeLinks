@@ -37,8 +37,8 @@ namespace GeoLinks.DataLayer.DalImplementation
                 {
                     Email = profileModal.mailId,
                     PhoneNumber = profileModal.PhoneNumber,
-                    CreatedOn = DateTime.UtcNow,
-                    ModifiedOn = DateTime.UtcNow,
+                    CreatedOn = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                    ModifiedOn = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
                     Username = profileModal.UserName,
                     IsActive = true
                 };
@@ -57,8 +57,8 @@ namespace GeoLinks.DataLayer.DalImplementation
                         PasswordHash = hashedPassword,
                         IsActive = false,
                         NumOfLogInAttempt = 0,
-                        CreatedOn = DateTime.UtcNow,
-                        ModifiedOn = DateTime.UtcNow,
+                        CreatedOn = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                        ModifiedOn = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
                         Email = profileModal.mailId,
                         PhoneNumber = profileModal.PhoneNumber,
                         Username = profileModal.UserName
@@ -113,7 +113,7 @@ namespace GeoLinks.DataLayer.DalImplementation
                         foreach (var e in existing)
                         {
                             e.IsExpired = true;
-                            e.ModifiedOn = DateTime.UtcNow;
+                            e.ModifiedOn = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
                             this.unitOfWork.GenericResetPasswordRepository.Update(e);
                         }
                         this.unitOfWork.GenericResetPasswordRepository.Save();
@@ -125,8 +125,8 @@ namespace GeoLinks.DataLayer.DalImplementation
                         UserId = userId,
                         Otp = hashedPassword,
                         IsExpired = false,
-                        CreatedOn = DateTime.UtcNow,
-                        ModifiedOn = DateTime.UtcNow
+                        CreatedOn = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                        ModifiedOn = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
                     };
                     unitOfWork.GenericResetPasswordRepository.Insert(resetPasswordDto);
                     unitOfWork.GenericResetPasswordRepository.Save();
@@ -173,7 +173,7 @@ namespace GeoLinks.DataLayer.DalImplementation
         {
             try
             {
-                var users = this.unitOfWork.GenericPasswordRepository
+                var users = unitOfWork.GenericPasswordRepository
                     .GetAll($"SELECT * FROM users WHERE \"ProfileId\" = {userId}")
                     .ToList();
 
@@ -183,8 +183,14 @@ namespace GeoLinks.DataLayer.DalImplementation
                 var user = users[0];
                 string hashedPassword = passwordHasher.HashPassword(null, newPassword);
                 user.PasswordHash = hashedPassword;
-                this.unitOfWork.GenericPasswordRepository.Update(user);
-                this.unitOfWork.GenericPasswordRepository.Save();
+
+                // Ensure DateTime kinds are UTC to avoid PostgreSQL timestamptz errors
+                // Normalize existing CreatedOn (if present) and set ModifiedOn to UTC now.
+                user.CreatedOn = DateTime.SpecifyKind(user.CreatedOn, DateTimeKind.Utc);
+                user.ModifiedOn = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+
+                unitOfWork.GenericPasswordRepository.Update(user);
+                unitOfWork.GenericPasswordRepository.Save();
                 return true;
             }
             catch (Exception ex)
