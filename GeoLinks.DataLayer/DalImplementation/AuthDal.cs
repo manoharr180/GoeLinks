@@ -146,7 +146,7 @@ namespace GeoLinks.DataLayer.DalImplementation
             {
                 string query = string.Format("SELECT rp.* " +
                                              "FROM resetpassword rp " +
-                                             "WHERE rp.\"userid\" = {0} AND rp.\"isexpired\" IS NOT TRUE " +
+                                             "WHERE rp.\"userid\" = {0} AND rp.\"isexpired\" IS NOT TRUE AND rp.\"created_on\" > now() - interval '90 seconds' " +
                                              "ORDER BY rp.\"created_on\" DESC LIMIT 1", userId);
 
                 var resetEntries = unitOfWork.GenericResetPasswordRepository
