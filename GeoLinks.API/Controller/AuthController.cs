@@ -1,10 +1,12 @@
-﻿using GeoLinks.Entities.Modals;
+﻿using Amazon.Runtime.Internal.Util;
+using GeoLinks.Entities.Modals;
 using GeoLinks.Services.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -25,14 +27,16 @@ namespace GeoLinks.API.Controller
         private IProfileService profileService;
         private IEmailService emailService;
         private ISmsService smsService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService, IConfiguration configuration, IProfileService profileService, IEmailService emailService, ISmsService smsService)
+        public AuthController(IAuthService authService, IConfiguration configuration, IProfileService profileService, IEmailService emailService, ISmsService smsService, ILogger<AuthController> logger)
         {
             this.authService = authService;
             this.configuration = configuration;
             this.profileService = profileService;
             this.emailService = emailService;
             this.smsService = smsService;
+            this._logger = logger;
         }
 
         [AllowAnonymous]
@@ -40,6 +44,7 @@ namespace GeoLinks.API.Controller
         [HttpPost]
         public ActionResult RegisterUser([FromBody]ProfileModal profileModal)
         {
+            _logger.LogInformation("Request started to register user with email: {Email} and phone: {PhoneNumber}", profileModal.mailId, profileModal.PhoneNumber);
             int profileId = this.authService.RegisterUser(profileModal);
 
 
@@ -54,6 +59,7 @@ namespace GeoLinks.API.Controller
         [HttpPost]
         public ActionResult Login([FromBody] ProfileModal profileModal)
         {
+            _logger.LogInformation("Request started to login user with email: {Email} and phone: {PhoneNumber}", profileModal.mailId, profileModal.PhoneNumber);
             try
             {
                 bool isValidUser = this.authService.ValidateUser(profileModal.mailId, profileModal.PhoneNumber, profileModal.Password);
@@ -71,6 +77,7 @@ namespace GeoLinks.API.Controller
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred during login for email: {Email} and phone: {PhoneNumber}", profileModal.mailId, profileModal.PhoneNumber);
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
             
@@ -159,6 +166,7 @@ namespace GeoLinks.API.Controller
         [HttpPost("reset-password-confirm")]
         public async Task<IActionResult> ResetPasswordConfirm([FromBody] int userid, string newPassword)
         {
+            _logger.LogInformation("Request started to reset password for user with ID: {UserId}", userid);
             // Validate JWT from Authorization header before allowing password update
             var authHeader = HttpContext.Request.Headers["Authorization"].ToString();
             if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
@@ -189,10 +197,12 @@ namespace GeoLinks.API.Controller
             }
             catch (SecurityTokenExpiredException)
             {
+                _logger.LogWarning("Token expired for user ID: {UserId}", userid);
             return Unauthorized("Token has expired.");
             }
             catch (Exception)
             {
+                _logger.LogError("Invalid token for user ID: {UserId}", userid);
             return Unauthorized("Invalid token.");
             }
 
@@ -210,6 +220,7 @@ namespace GeoLinks.API.Controller
         public async Task<IActionResult> LoginOtpRequest([FromBody] string email)
         {
         
+            _logger.LogInformation("Request started for login OTP for email: {Email}", email);
             var user = await authService.FindUserByEmailOrPhoneAsync(email);
             if (user == null)
                 return NotFound("User not found.");
@@ -233,6 +244,7 @@ namespace GeoLinks.API.Controller
         [HttpPost("login-otp-verify")]
         public async Task<IActionResult> LoginOtpVerify([FromBody] LoginOtpVerifyModel model)
         {
+            _logger.LogInformation("Request started to verify login OTP for profile ID: {ProfileId}", model.ProfileId);
             var isValid = await authService.ValidateOtpAsync(model.ProfileId, model.Otp);
             if (!isValid)
                 return BadRequest("Invalid OTP.");

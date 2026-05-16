@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using GeoLinks.Services.Services;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using Amazon.Runtime.Internal.Util;
 
 namespace GeoLinks.API.Controller
 {
@@ -12,16 +14,19 @@ namespace GeoLinks.API.Controller
     {
         private readonly ICartService cartService;
         private readonly IStoreService storeService;
-
-        public CartController(ICartService cartService, IStoreService storeService)
+        private readonly ILogger<CartController> _logger;
+ 
+        public CartController(ICartService cartService, IStoreService storeService, ILogger<CartController> logger)
         {
             this.cartService = cartService;
             this.storeService = storeService;
+            this._logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCartItems()
         {
+            _logger.LogInformation("Request started to get cart items for user ID: {UserId}", CurrentUserId);
             if (CurrentUserId == null)
                 return Unauthorized("User ID not found in token.");
 
@@ -32,6 +37,9 @@ namespace GeoLinks.API.Controller
         [HttpPost]
         public async Task<IActionResult> AddItemToCart([FromBody] CartItemModal newItem)
         {
+                _logger.LogInformation("Request started to add item to cart for user ID: {UserId}", CurrentUserId);
+                if (CurrentUserId == null)
+                    return Unauthorized("User ID not found in token.");
             if (CurrentUserId == null)
                 return Unauthorized("User ID not found in token.");
 
@@ -43,9 +51,13 @@ namespace GeoLinks.API.Controller
         [HttpPut("{storeId}/{itemNumber}")]
         public async Task<IActionResult> UpdateCartItem(string storeId, int itemNumber, [FromBody] CartItemModal updatedItem)
         {
+            _logger.LogInformation("Request started to update cart item for user ID: {UserId}", CurrentUserId);
             if (CurrentUserId == null)
+            {
+                _logger.LogWarning("Unauthorized attempt to update cart item for user ID: {UserId}", CurrentUserId);
                 return Unauthorized("User ID not found in token.");
-
+            }
+                
             updatedItem.UserId = CurrentUserId.Value;
             // Optionally set storeId and itemNumber if needed
             await cartService.UpdateCartItemAsync(updatedItem);
@@ -56,9 +68,14 @@ namespace GeoLinks.API.Controller
         public async Task<IActionResult> DeleteCartItem(int itemNumber)
         {
             if (CurrentUserId == null)
+            {
+                _logger.LogWarning("Unauthorized attempt to delete cart item for user ID: {UserId}", CurrentUserId);
                 return Unauthorized("User ID not found in token.");
+            }
+                
 
             // You may need to construct a CartItemModal or pass identifiers as needed
+            _logger.LogInformation("Request started to delete cart item for user ID: {UserId}", CurrentUserId);
             var itemToRemove = new CartItemModal
             {
                 CartItemId = itemNumber,
@@ -71,10 +88,13 @@ namespace GeoLinks.API.Controller
         [HttpDelete()]
         public async Task<IActionResult> DeleteCartItem()
         {
+            _logger.LogInformation("Request started to clear cart for user ID: {UserId}", CurrentUserId);
             if (CurrentUserId == null)
+            {
+                _logger.LogWarning("Unauthorized attempt to clear cart for user ID: {UserId}", CurrentUserId);
                 return Unauthorized("User ID not found in token.");
-
-            
+            }
+                
             await cartService.ClearCartAsync(CurrentUserId.Value);
             return Ok();
         }

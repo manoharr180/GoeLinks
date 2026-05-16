@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using GeoLinks.DataLayer.DalInterface;
 using GeoLinks.Entities.DbEntities;
 using GeoLinks.Entities.Modals;
@@ -46,6 +46,7 @@ namespace GeoLinks.DataLayer.DalImplementation
                     Username = profileModal.UserName,
                     IsActive = true
                 };
+                _logger.LogInformation("Attempting to register user with email: {Email}", usersDto.Email);
                 string password = profileModal.Password;
                 ProfileDto profileDto = mapper.Map<ProfileModal, ProfileDto>(profileModal);
 
@@ -70,6 +71,7 @@ namespace GeoLinks.DataLayer.DalImplementation
                     this.unitOfWork.GenericPasswordRepository.Save();
                     this.unitOfWork.Commit();
                 }
+                _logger.LogInformation("User registered successfully with email: {Email}", profileModal?.mailId);
                 return profileDto.ProfileId;
             }
             catch (Exception ex)
@@ -107,6 +109,7 @@ namespace GeoLinks.DataLayer.DalImplementation
                 if (userId > 0)
                 {
                     // Expire any existing non-expired OTP entries for this user
+                    _logger.LogInformation("Attempting to store OTP for user ID: {UserId}", userId);
                     var existing = this.unitOfWork.GenericResetPasswordRepository
                         .GetAll($"SELECT * FROM resetpassword WHERE \"userid\" = {userId} AND \"isexpired\" IS NOT TRUE")
                         .ToList();
@@ -135,6 +138,7 @@ namespace GeoLinks.DataLayer.DalImplementation
                     unitOfWork.GenericResetPasswordRepository.Save();
                     userIdDto = resetPasswordDto.UserId;
                 }
+                _logger.LogInformation("OTP stored successfully for user ID: {UserId}", userId);
                 return userIdDto > 0;
             }
             catch (Exception ex)
@@ -147,6 +151,7 @@ namespace GeoLinks.DataLayer.DalImplementation
         {
             try
             {
+                _logger.LogInformation("Attempting to validate OTP for user ID: {UserId}", userId);
                 string query = string.Format("SELECT rp.* " +
                                              "FROM resetpassword rp " +
                                              "WHERE rp.\"userid\" = {0} AND rp.\"isexpired\" IS NOT TRUE AND rp.\"created_on\" > now() - interval '90 seconds' " +
@@ -164,6 +169,7 @@ namespace GeoLinks.DataLayer.DalImplementation
                     return false;
 
                 PasswordVerificationResult verificationResult = otpHasher.VerifyHashedPassword(null, storedHashedOtp, otp);
+                _logger.LogInformation("OTP validation result for user ID: {UserId}: {VerificationResult}", userId, verificationResult);
                 return verificationResult == PasswordVerificationResult.Success;
             }
             catch (Exception ex)
@@ -176,6 +182,7 @@ namespace GeoLinks.DataLayer.DalImplementation
         {
             try
             {
+                _logger.LogInformation("Attempting to update password for user ID: {UserId}", userId);
                 var users = unitOfWork.GenericPasswordRepository
                     .GetAll($"SELECT * FROM users WHERE \"ProfileId\" = {userId}")
                     .ToList();
@@ -194,6 +201,7 @@ namespace GeoLinks.DataLayer.DalImplementation
 
                 unitOfWork.GenericPasswordRepository.Update(user);
                 unitOfWork.GenericPasswordRepository.Save();
+                _logger.LogInformation("Password updated successfully for user ID: {UserId}", userId);
                 return true;
             }
             catch (Exception ex)
@@ -206,14 +214,17 @@ namespace GeoLinks.DataLayer.DalImplementation
         {
             try
             {
+                _logger.LogInformation("Attempting to find user by email or phone: {EmailOrPhone}", emailOrPhone);
                 var users = this.unitOfWork.GenericProfileRepository
                     .GetAll($"SELECT * FROM profiledetails WHERE \"mailid\" = '{emailOrPhone}' OR \"phonenumber\" = '{emailOrPhone}'")
                     .ToList();
 
                 if (users != null && users.Count > 0)
                 {
+                    _logger.LogInformation("User found by email or phone: {EmailOrPhone}", emailOrPhone);
                     return mapper.Map<ProfileDto, ProfileModal>(users[0]);
                 }
+                _logger.LogWarning("No user found by email or phone: {EmailOrPhone}", emailOrPhone);
                 return null;
             }
             catch (Exception ex)
