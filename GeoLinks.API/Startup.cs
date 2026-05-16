@@ -9,6 +9,7 @@ using GeoLinks.DataLayer.DalImplementation;
 using GeoLinks.DataLayer.DalInterface;
 using GeoLinks.Services.Implementations;
 using GeoLinks.Services.Services;
+using GeoLinks.API.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -118,6 +119,10 @@ namespace GeoLinks.API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<CorrelationIdMiddleware>();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -134,7 +139,7 @@ namespace GeoLinks.API
             {
                 endpoints.MapControllers();
             });
-            
+
         }
     }
 }

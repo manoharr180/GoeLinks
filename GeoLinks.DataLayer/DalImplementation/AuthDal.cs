@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GeoLinks.DataLayer.DalInterface;
 using GeoLinks.Entities.DbEntities;
 using GeoLinks.Entities.Modals;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,14 @@ namespace GeoLinks.DataLayer.DalImplementation
     {
         private IUnitOfWork unitOfWork { get; set; }
         private IMapper mapper;
+        private ILogger<AuthDal> _logger;
         private Authentication.PasswordHasher<ProfileDto> passwordHasher = new Authentication.PasswordHasher<ProfileDto>();
         private Authentication.PasswordHasher<ResetPasswordDto> otpHasher = new Authentication.PasswordHasher<ResetPasswordDto>();
-        public AuthDal(IUnitOfWork unitOfWork)
+
+        public AuthDal(IUnitOfWork unitOfWork, ILogger<AuthDal> logger)
         {
             this.unitOfWork = unitOfWork;
+            _logger = logger;
             var mapperConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<ProfileDto, ProfileModal>();
@@ -70,10 +74,9 @@ namespace GeoLinks.DataLayer.DalImplementation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error during registration: {ex.Message}");
+                _logger.LogError(ex, "Error during user registration for email: {Email}", profileModal?.mailId);
                 throw;
             }
-            
         }
 
         public bool ValidateUser(string userMail, string phoneNum, string password)
@@ -136,7 +139,7 @@ namespace GeoLinks.DataLayer.DalImplementation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error during registration: {ex.Message}");
+                _logger.LogError(ex, "Error storing OTP for user ID: {UserId}", userId);
                 throw;
             }
         }
@@ -165,7 +168,7 @@ namespace GeoLinks.DataLayer.DalImplementation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error validating OTP: {ex.Message}");
+                _logger.LogError(ex, "Error validating OTP for user ID: {UserId}", userId);
                 return false;
             }
         }
@@ -195,7 +198,7 @@ namespace GeoLinks.DataLayer.DalImplementation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error updating password: {ex.Message}");
+                _logger.LogError(ex, "Error updating password for user ID: {UserId}", userId);
                 return false;
             }
         }
@@ -215,9 +218,9 @@ namespace GeoLinks.DataLayer.DalImplementation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error finding user: {ex.Message}");
+                _logger.LogError(ex, "Error finding user by email or phone: {EmailOrPhone}", emailOrPhone);
                 return null;
             }
         }
-    }   
+    }
 }
