@@ -10,6 +10,7 @@ using GeoLinks.DataLayer.DalInterface;
 using GeoLinks.Services.Implementations;
 using GeoLinks.Services.Services;
 using GeoLinks.API.Middleware;
+using GeoLinks.ApiProxies.ShipRocket;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,6 +37,12 @@ namespace GeoLinks.API
             services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
             // Register HttpClient
             services.AddHttpClient<IExternalApiService, ExternalApiService>();
+            services.Configure<ShipRocketOptions>(Configuration.GetSection(ShipRocketOptions.SectionName));
+            services.AddHttpClient<IShipRocketApiProxy, ShipRocketApiProxy>((serviceProvider, client) =>
+            {
+                var options = serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ShipRocketOptions>>().Value;
+                client.BaseAddress = new Uri(options.BaseUrl.EndsWith("/") ? options.BaseUrl : options.BaseUrl + "/");
+            });
 
             // Data Access Layer
             services.AddTransient<IProfileDal, ProfilesDal>();
